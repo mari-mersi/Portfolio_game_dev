@@ -361,3 +361,12 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Local database and logs
+*.db
+*.db-shm
+*.db-wal
+logs/
+
+# Personal notes (not for public repo)
+/Notes/
