@@ -1,0 +1,187 @@
+﻿@model Portfolio_game_dev.ViewModels.ExperienceIndexViewModel
+@{
+    ViewData["Title"] = "Опыт работы";
+}
+
+<div class="d-flex justify-content-between align-items-end flex-wrap mb-5">
+    <div>
+        <h1 class="mb-1">Опыт работы</h1>
+        <p class="text-muted mb-0">Таймлайн проектов и студий.</p>
+    </div>
+
+    @if (Model.TotalMonths > 0)
+    {
+        <div class="text-muted small">
+            <div><strong>@Model.TotalExperienceText</strong> общего стажа</div>
+            <div>@Model.CompaniesCount @(Model.CompaniesCount == 1 ? "компания" : "компаний")</div>
+        </div>
+    }
+</div>
+
+@if (!Model.Items.Any())
+{
+    <div class="alert alert-info">Пока нет записей об опыте — скоро добавлю.</div>
+}
+else
+{
+    <div class="timeline">
+        @foreach (var group in Model.Groups)
+        {
+            <div class="timeline-year">
+                <span class="timeline-year-label">@group.Year</span>
+            </div>
+
+            foreach (var exp in group.Items)
+            {
+                <div class="timeline-item">
+                    <div class="timeline-dot @(exp.IsCurrent ? "timeline-dot-current" : "")"></div>
+
+                    <div class="card shadow-sm mb-4">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between flex-wrap align-items-start mb-2">
+                                <div>
+                                    <h5 class="card-title mb-1">
+                                        @exp.Position
+                                        @if (exp.IsCurrent)
+                                        {
+                                            <span class="badge bg-success ms-2 align-middle">сейчас</span>
+                                        }
+                                    </h5>
+                                    <div class="text-muted">
+                                        <strong>@exp.Company</strong>
+                                        @if (!string.IsNullOrWhiteSpace(exp.EmploymentType))
+                                        {
+                                            @:· @exp.EmploymentType
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(exp.Location))
+                                        {
+                                            @:· @exp.Location
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="text-end text-muted small">
+                                    <div>@exp.Period</div>
+                                    <div>@exp.DurationText</div>
+                                </div>
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(exp.Description))
+                            {
+                                <p class="mb-2">@exp.Description</p>
+                            }
+
+                            @if (exp.Highlights.Any())
+                            {
+                                <ul class="mb-3">
+                                    @foreach (var h in exp.Highlights)
+                                    {
+                                        <li>@h</li>
+                                    }
+                                </ul>
+                            }
+
+                            @if (exp.TechList.Any())
+                            {
+                                <div class="d-flex flex-wrap gap-1">
+                                    @foreach (var tech in exp.TechList)
+                                    {
+                                        <span class="badge bg-light text-dark border">@tech</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+
+    @if (Model.AllTech.Any())
+    {
+        <section class="mt-5">
+            <h3 class="mb-3">Все инструменты и технологии</h3>
+            <div class="d-flex flex-wrap gap-1">
+                @foreach (var tech in Model.AllTech)
+                {
+                    <span class="badge bg-secondary">@tech</span>
+                }
+            </div>
+        </section>
+    }
+}
+
+@section Scripts {
+    <style>
+        .timeline {
+            position: relative;
+            padding-left: 2.5rem;
+        }
+
+        .timeline::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0.9rem;
+            width: 2px;
+            background: #e5e5e5;
+        }
+
+        .timeline-year {
+            position: relative;
+            margin: 1.5rem 0 1rem;
+        }
+
+        .timeline-year-label {
+            position: relative;
+            left: -2.5rem;
+            display: inline-block;
+            background: #fff;
+            padding: 0 .5rem;
+            font-weight: 600;
+            color: #6c757d;
+            font-size: .875rem;
+            letter-spacing: .05em;
+        }
+
+        .timeline-item {
+            position: relative;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -1.78rem;
+            top: 1.4rem;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #adb5bd;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 2px #adb5bd;
+        }
+
+        .timeline-dot-current {
+            background: #198754;
+            box-shadow: 0 0 0 2px #198754;
+        }
+
+        @@media (max-width: 576px) {
+            .timeline {
+                padding-left: 1.75rem;
+            }
+
+            .timeline::before {
+                left: 0.5rem;
+            }
+
+            .timeline-dot {
+                left: -1.38rem;
+            }
+
+            .timeline-year-label {
+                left: -1.75rem;
+            }
+        }
+    </style>
+}

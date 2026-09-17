@@ -1,0 +1,12 @@
+﻿@model string
+
+@{
+    ViewData["Title"] = "Фильтрация по тегу";
+}
+
+<div class="container mx-auto px-4 py-16 text-center">
+    <p class="text-gray-400 mb-4">Фильтрация проектов по тегу: <span class="text-white font-bold">#@Model</span>...</p>
+    <a asp-controller="Projects" asp-action="Index" asp-route-tag="@Model" class="text-indigo-400 hover:underline">
+        Нажмите здесь, если перенаправление не произошло
+    </a>
+</div>

@@ -1,0 +1,62 @@
+﻿@model Portfolio_game_dev.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Главная";
+}
+
+<section class="hero text-center py-5 bg-light rounded-3 mb-5">
+    <div class="container py-4">
+        <h1 class="display-5 fw-bold">@Model.HeroTagline</h1>
+        <p class="lead text-muted mt-3">@Model.HeroSubline</p>
+        <div class="mt-4">
+            <a asp-controller="Projects" asp-action="Index" class="btn btn-primary btn-lg me-2">
+                Смотреть проекты
+            </a>
+            <a asp-controller="Home" asp-action="Contact" class="btn btn-outline-secondary btn-lg">
+                Связаться
+            </a>
+        </div>
+    </div>
+</section>
+
+@if (Model.FeaturedProjects.Any()) {
+    <section class="mb-5">
+        <h2 class="mb-4">Избранные проекты</h2>
+        <div class="row g-4">
+            @foreach (var project in Model.FeaturedProjects) {
+                <div class="col-md-4">
+                    <partial name="_ProjectCard" model="project" />
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@if (Model.TopSkills.Any()) {
+    <section class="mb-5">
+        <h2 class="mb-4">Навыки</h2>
+        <div class="d-flex flex-wrap gap-2">
+            @foreach (var skill in Model.TopSkills) {
+                <partial name="_SkillBadge" model="skill" />
+            }
+        </div>
+    </section>
+}
+
+@if (Model.RecentExperience.Any()) {
+    <section class="mb-5">
+        <h2 class="mb-4">Опыт</h2>
+        <ul class="list-unstyled">
+            @foreach (var exp in Model.RecentExperience) {
+                <li class="mb-3 pb-3 border-bottom">
+                    <div class="d-flex justify-content-between flex-wrap">
+                        <strong>@exp.Position</strong>
+                        <span class="text-muted small">@exp.Period</span>
+                    </div>
+                    <div class="text-muted">@exp.Company</div>
+                    <p class="mb-0 mt-2">@exp.Description</p>
+                </li>
+            }
+        </ul>
+        <a asp-controller="Experience" asp-action="Index" class="btn btn-link px-0">Весь опыт →</a>
+    </section>
+}

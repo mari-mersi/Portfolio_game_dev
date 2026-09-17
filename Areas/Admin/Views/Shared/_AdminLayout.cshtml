@@ -1,0 +1,32 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] — Админка</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900">
+    <div class="flex min-h-screen">
+        <aside class="w-60 bg-gray-900 text-gray-200 p-5 space-y-1">
+            <div class="font-bold text-white text-lg mb-6">Админка</div>
+            <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+               class="block px-3 py-2 rounded hover:bg-gray-800">Дашборд</a>
+            <a asp-area="Admin" asp-controller="Projects" asp-action="Index"
+               class="block px-3 py-2 rounded hover:bg-gray-800">Проекты</a>
+            <a asp-area="Admin" asp-controller="Skills" asp-action="Index"
+               class="block px-3 py-2 rounded bg-gray-800 text-white">Навыки</a>
+            <a asp-area="Admin" asp-controller="Experience" asp-action="Index"
+               class="block px-3 py-2 rounded hover:bg-gray-800">Опыт</a>
+            <a asp-area="Admin" asp-controller="Blog" asp-action="Index"
+               class="block px-3 py-2 rounded hover:bg-gray-800">Блог</a>
+        </aside>
+
+        <main class="flex-1 p-8">
+            @RenderBody()
+        </main>
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

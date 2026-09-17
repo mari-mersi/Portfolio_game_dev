@@ -1,0 +1,53 @@
+﻿@model Portfolio_game_dev.Models.ProjectsIndexViewModel
+
+@{
+    ViewData["Title"] = "Портфолио проектов";
+}
+
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-4xl font-extrabold text-white mb-2">Проекты и портфолио</h1>
+        <p class="text-gray-400">Игры, прототипы, шейдеры и технические системы.</p>
+    </div>
+
+    <!-- Панель тегов / фильтров -->
+    <div class="flex flex-wrap gap-2 mb-8">
+        <a asp-controller="Projects" asp-action="Index" asp-route-tag=""
+           class="px-4 py-2 rounded-lg text-sm font-medium transition @(string.IsNullOrEmpty(Model.SelectedTag) ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30" : "bg-gray-800 text-gray-300 hover:bg-gray-700")">
+            Все
+        </a>
+        @foreach (var tag in Model.AllTags) {
+            var isActive = string.Equals(Model.SelectedTag, tag, System.StringComparison.OrdinalIgnoreCase);
+            <a asp-controller="Projects" asp-action="Index" asp-route-tag="@tag"
+               class="px-4 py-2 rounded-lg text-sm font-medium transition @(isActive ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30" : "bg-gray-800 text-gray-300 hover:bg-gray-700")">
+                #@tag
+            </a>
+        }
+    </div>
+
+    <!-- Сетка проектов -->
+    @if (!Model.Projects.Any()) {
+        <div class="text-center py-16 bg-gray-800/40 rounded-xl border border-gray-700/50">
+            <p class="text-gray-400 text-lg">По выбранному тегу ничего не найдено.</p>
+        </div>
+    }
+    else {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach (var project in Model.Projects) {
+                <partial name="_ProjectCard" model="project" />
+            }
+        </div>
+
+        <!-- Пагинация -->
+        @if (Model.TotalPages > 1) {
+            <div class="flex justify-center items-center gap-2 mt-12">
+                @for (int i = 1; i <= Model.TotalPages; i++) {
+                    <a asp-controller="Projects" asp-action="Index" asp-route-tag="@Model.SelectedTag" asp-route-page="@i"
+                       class="px-4 py-2 rounded-lg text-sm font-medium transition @(i == Model.CurrentPage ? "bg-indigo-600 text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700")">
+                        @i
+                    </a>
+                }
+            </div>
+        }
+    }
+</div>

@@ -1,0 +1,22 @@
+﻿@{
+    ViewData["Code"] = 404;
+    ViewData["Title"] = "Страница не найдена";
+}
+
+<div class="text-center py-5">
+    <h1 class="display-1 fw-bold text-warning">404</h1>
+    <h2 class="mb-4">Страница не найдена</h2>
+
+    <p class="lead text-muted">
+        Возможно, ссылка устарела или страница была перемещена.
+    </p>
+
+    <div class="mt-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary me-2">
+            На главную
+        </a>
+        <a asp-controller="Projects" asp-action="Index" class="btn btn-outline-secondary">
+            К проектам
+        </a>
+    </div>
+</div>

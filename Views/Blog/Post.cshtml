@@ -1,0 +1,88 @@
+﻿@model Portfolio_game_dev.ViewModels.BlogPostViewModel
+@{
+    ViewData["Title"] = Model.Post.Title;
+    ViewData["Description"] = Model.Post.Summary;
+}
+
+<article class="blog-post">
+    <header class="mb-4">
+        <h1 class="mb-3">@Model.Post.Title</h1>
+        <div class="text-muted">
+            @Model.Post.PublishedAt.ToString("dd MMMM yyyy") ·
+            @Model.Post.ReadTimeMinutes мин чтения
+        </div>
+        @if (Model.Post.Tags.Any())
+        {
+            <div class="mt-3">
+                @foreach (var tag in Model.Post.Tags)
+                {
+                    <span class="badge bg-light text-dark border me-1">#@tag</span>
+                }
+            </div>
+        }
+    </header>
+
+    @if (!string.IsNullOrWhiteSpace(Model.Post.CoverImageUrl))
+    {
+        <img src="@Model.Post.CoverImageUrl" class="img-fluid rounded mb-4" alt="@Model.Post.Title" />
+    }
+
+    <div class="blog-content">
+        @Html.Raw(Model.RenderedContent)
+    </div>
+
+    <hr class="my-5" />
+
+    <div class="d-flex justify-content-between">
+        <a asp-action="Index" class="btn btn-outline-secondary">← Все статьи</a>
+    </div>
+</article>
+
+@if (Model.RelatedPosts.Any())
+{
+    <section class="mt-5">
+        <h3 class="mb-4">Читайте также</h3>
+        <div class="row g-4">
+            @foreach (var post in Model.RelatedPosts)
+            {
+                <div class="col-md-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h6 class="card-title">
+                                <a asp-action="Post" asp-route-slug="@post.Slug"
+                                   class="text-decoration-none text-dark stretched-link">@post.Title</a>
+                            </h6>
+                            <p class="card-text small text-muted mb-0">@post.Summary</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@section Scripts {
+    <style>
+        .blog-content h1 { font-size: 1.75rem; margin-top: 2rem; }
+        .blog-content h2 { font-size: 1.4rem; margin-top: 1.75rem; }
+        .blog-content h3 { font-size: 1.15rem; margin-top: 1.5rem; }
+        .blog-content p { margin-bottom: 1rem; line-height: 1.7; }
+        .blog-content blockquote {
+            border-left: 4px solid #dee2e6;
+            padding-left: 1rem;
+            color: #6c757d;
+            font-style: italic;
+        }
+        .blog-content code {
+            background: #f8f9fa;
+            padding: .1rem .3rem;
+            border-radius: .25rem;
+        }
+        .blog-content pre {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: .5rem;
+            overflow-x: auto;
+        }
+    </style>
+}

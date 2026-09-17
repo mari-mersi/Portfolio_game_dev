@@ -1,0 +1,30 @@
+﻿@model Portfolio_game_dev.Models.Skill
+@{
+    ViewData["Title"] = "Удалить навык";
+}
+
+<div class="max-w-lg">
+    <h1 class="text-2xl font-bold mb-4">Удалить навык?</h1>
+
+    <div class="rounded-xl border bg-white p-5 mb-5">
+        <div class="font-semibold text-lg mb-1">@Model.Name</div>
+        <div class="text-sm text-gray-500 mb-2">@Model.Category</div>
+        <div class="text-amber-500 text-sm">
+            @for (int i = 1; i <= Model.Level; i++) {
+                <text>★</text>
+            }
+        </div>
+    </div>
+
+    <p class="text-sm text-red-600 mb-5">
+        Действие необратимо. Навык будет удалён из всех разделов сайта.
+    </p>
+
+    <form asp-action="Delete" asp-route-id="@Model.Id" method="post" class="flex gap-3">
+        <button type="submit"
+                class="px-5 py-2 rounded-lg bg-red-600 text-white font-medium hover:bg-red-700">
+            Удалить
+        </button>
+        <a asp-action="Index" class="px-5 py-2 rounded-lg border">Отмена</a>
+    </form>
+</div>

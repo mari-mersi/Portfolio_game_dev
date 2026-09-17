@@ -1,0 +1,53 @@
+﻿@using Portfolio_game_dev.Areas.Admin.ViewModels
+@model SkillEditViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-red-600 text-sm"></div>
+
+<div>
+    <label asp-for="Name" class="block text-sm font-medium mb-1"></label>
+    <input asp-for="Name" class="w-full border rounded-lg px-3 py-2" />
+    <span asp-validation-for="Name" class="text-red-600 text-xs"></span>
+</div>
+
+<div class="grid grid-cols-2 gap-4">
+    <div>
+        <label asp-for="Category" class="block text-sm font-medium mb-1"></label>
+        <select asp-for="Category"
+                asp-items="@(new SelectList(Model.AvailableCategories))"
+                class="w-full border rounded-lg px-3 py-2">
+            <option value="">— выберите —</option>
+        </select>
+        <span asp-validation-for="Category" class="text-red-600 text-xs"></span>
+    </div>
+
+    <div>
+        <label asp-for="Level" class="block text-sm font-medium mb-1"></label>
+        <select asp-for="Level" class="w-full border rounded-lg px-3 py-2">
+            @for (int i = 1; i <= 5; i++) {
+                <option value="@i">@i — @(new string('★', i))</option>
+            }
+        </select>
+        <span asp-validation-for="Level" class="text-red-600 text-xs"></span>
+    </div>
+</div>
+
+<div class="grid grid-cols-2 gap-4">
+    <div>
+        <label asp-for="YearsOfExperience" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="YearsOfExperience" type="number" min="0" max="50"
+               class="w-full border rounded-lg px-3 py-2" />
+        <span asp-validation-for="YearsOfExperience" class="text-red-600 text-xs"></span>
+    </div>
+
+    <div>
+        <label asp-for="IconUrl" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="IconUrl" placeholder="/img/skills/dotnet.svg"
+               class="w-full border rounded-lg px-3 py-2" />
+        <span asp-validation-for="IconUrl" class="text-red-600 text-xs"></span>
+    </div>
+</div>
+
+<label class="flex items-center gap-2 text-sm">
+    <input asp-for="IsFeatured" type="checkbox" class="rounded" />
+    <span>Показывать на главной странице</span>
+</label>

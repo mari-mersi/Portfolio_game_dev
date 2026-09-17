@@ -1,0 +1,23 @@
+﻿@using Portfolio_game_dev.Areas.Admin.ViewModels
+@model SkillEditViewModel
+@{
+    ViewData["Title"] = "Новый навык";
+}
+
+<h1 class="text-2xl font-bold mb-6">Новый навык</h1>
+
+<form asp-action="Create" method="post" class="max-w-2xl space-y-5">
+    <partial name="_SkillForm" model="Model" />
+
+    <div class="flex gap-3 pt-2">
+        <button type="submit"
+                class="px-5 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700">
+            Создать
+        </button>
+        <a asp-action="Index" class="px-5 py-2 rounded-lg border">Отмена</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

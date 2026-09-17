@@ -1,0 +1,14 @@
+﻿@model Portfolio_game_dev.Models.Skill
+
+<span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full
+             bg-gray-100 hover:bg-gray-200 text-sm font-medium transition">
+    @if (!string.IsNullOrEmpty(Model.IconUrl)) {
+        <img src="@Model.IconUrl" alt="" class="w-4 h-4" loading="lazy" />
+    }
+    @Model.Name
+    <span class="text-amber-500 text-xs">
+        @for (int i = 1; i <= Model.Level; i++) {
+            <text>★</text>
+        }
+    </span>
+</span>

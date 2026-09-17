@@ -1,0 +1,37 @@
+﻿@{
+    var code = ViewData["Code"] as int? ?? 500;
+    var title = ViewData["Title"] as string ?? "Что-то пошло не так";
+    var requestId = System.Diagnostics.Activity.Current?.Id ?? Context.TraceIdentifier;
+}
+
+<div class="text-center py-5">
+    <h1 class="display-1 fw-bold text-danger">@code</h1>
+    <h2 class="mb-4">@title</h2>
+
+    <p class="lead text-muted">
+        @if (code == 404) {
+            @:Такой страницы не существует — возможно, ссылка устарела.
+        }
+        else if (code == 500) {
+            @:На сервере произошла ошибка. Уже разбираюсь.
+        }
+        else {
+            @:Не удалось обработать запрос.
+        }
+    </p>
+
+    <div class="mt-4">
+        <a asp-controller="Home" asp-action="Index" class="btn btn-primary me-2">
+            На главную
+        </a>
+        <a asp-controller="Projects" asp-action="Index" class="btn btn-outline-secondary">
+            К проектам
+        </a>
+    </div>
+
+    @if (Context.RequestServices.GetService<IWebHostEnvironment>()?.IsDevelopment() == true) {
+        <p class="text-muted small mt-5">
+            Request ID: <code>@requestId</code>
+        </p>
+    }
+</div>
