@@ -1,34 +1,42 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Portfolio_game_dev.Models {
-    public class BlogPost {
-        public int Id { get; set; }
+namespace Portfolio_game_dev.Models;
 
-        [Required, StringLength(200)]
-        public string Title { get; set; } = string.Empty;
+/// <summary>
+/// Статья блога. Публичная часть — /Blog и /Blog/{slug}.
+/// </summary>
+public class BlogPost : BaseEntity {
+    [Required, MaxLength(200)]
+    /// <summary>Заголовок статьи.</summary>
+    public string Title { get; set; } = string.Empty;
 
-        /// <summary>URL-идентификатор: /blog/{slug}.</summary>
-        [Required, StringLength(200)]
-        public string Slug { get; set; } = string.Empty;
+    [Required, MaxLength(200)]
+    /// <summary>URL-идентификатор. Уникален.</summary>
+    public string Slug { get; set; } = string.Empty;
 
-        /// <summary>Краткое описание для списка и meta-тега.</summary>
-        [StringLength(400)]
-        public string Summary { get; set; } = string.Empty;
+    [MaxLength(500)]
+    /// <summary>Краткое описание (для превью в списке и meta description).</summary>
+    public string? Summary { get; set; }
 
-        /// <summary>Тело статьи в Markdown.</summary>
-        public string Content { get; set; } = string.Empty;
+    /// <summary>Полный текст статьи в Markdown. Рендерится через Markdig.</summary>
+    public string? Content { get; set; }
 
-        public string? CoverImageUrl { get; set; }
+    /// <summary>Устаревшее поле. Оставлено для совместимости; используй Content.</summary>
+    public string? ContentMd { get; set; }
 
-        public DateTime PublishedAt { get; set; }
+    [MaxLength(300)]
+    /// <summary>Путь к обложке.</summary>
+    public string? CoverImageUrl { get; set; }
 
-        /// <summary>Черновик не показываем в публичном списке.</summary>
-        public bool IsPublished { get; set; } = true;
+    /// <summary>Примерное время чтения в минутах. Можно считать вручную или в сервисе.</summary>
+    public int ReadTimeMinutes { get; set; }
 
-        public List<string> Tags { get; set; } = new();
+    /// <summary>Дата публикации. null — черновик.</summary>
+    public DateTime? PublishedAt { get; set; }
 
-        /// <summary>Примерное время чтения (мин), считаем из длины контента.</summary>
-        public int ReadTimeMinutes =>
-            Math.Max(1, (int)Math.Ceiling(Content.Split(' ', StringSplitOptions.RemoveEmptyEntries).Length / 200.0));
-    }
+    /// <summary>Опубликована ли статья. false — не видна на /Blog.</summary>
+    public bool IsPublished { get; set; }
+
+    /// <summary>Теги статьи. M2M через join-таблицу BlogPostTags.</summary>
+    public ICollection<Tag> Tags { get; set; } = new List<Tag>();
 }

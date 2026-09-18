@@ -8,7 +8,7 @@
     <header class="mb-4">
         <h1 class="mb-3">@Model.Post.Title</h1>
         <div class="text-muted">
-            @Model.Post.PublishedAt.ToString("dd MMMM yyyy") ·
+            @Model.Post.PublishedAt?.ToString("dd MMMM yyyy") ·
             @Model.Post.ReadTimeMinutes мин чтения
         </div>
         @if (Model.Post.Tags.Any())

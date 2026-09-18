@@ -58,7 +58,7 @@
 
             <div>
                 <h4 class="text-xs font-semibold uppercase text-gray-400 mb-1">Дата выхода</h4>
-                <p class="text-white text-sm font-medium">@Model.Project.ReleaseDate.ToString("dd MMMM yyyy")</p>
+                <p class="text-white text-sm font-medium">@Model.Project.ReleaseDate?.ToString("dd MMMM yyyy")</p>
             </div>
 
             <!-- Внешние ссылки -->

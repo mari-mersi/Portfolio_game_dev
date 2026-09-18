@@ -26,7 +26,7 @@ else {
                         </h5>
 
                         <div class="text-muted small mb-2">
-                            @post.PublishedAt.ToString("dd MMM yyyy") · @post.ReadTimeMinutes мин чтения
+                            @post.PublishedAt?.ToString("dd MMM yyyy") · @post.ReadTimeMinutes мин чтения
                         </div>
 
                         <p class="card-text">@post.Summary</p>
