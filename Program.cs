@@ -2,6 +2,14 @@
 using Microsoft.EntityFrameworkCore;
 using Portfolio_game_dev.Data;
 using Portfolio_game_dev.Services;
+using Portfolio_game_dev.Services.Abstractions;
+using Portfolio_game_dev.Services.Implementations;
+using System.Globalization;
+
+// до builder.Build():
+var ruCulture = new CultureInfo("ru-RU");
+CultureInfo.DefaultThreadCurrentCulture = ruCulture;
+CultureInfo.DefaultThreadCurrentUICulture = ruCulture;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +40,10 @@ builder.Services.AddControllersWithViews();
 
 // ── Наши сервисы ─────────────────────────────────────────────────────
 builder.Services.AddScoped<IPdfResumeService, PdfResumeService>();
+
+builder.Services.AddScoped<IProjectService, ProjectService>();
+builder.Services.AddScoped<ISkillService, SkillService>();
+builder.Services.AddScoped<IBlogService, BlogService>();
 
 var app = builder.Build();
 

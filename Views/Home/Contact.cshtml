@@ -1,60 +1,7 @@
-﻿@model Portfolio_game_dev.ViewModels.ContactViewModel
-@{
+﻿@{
     ViewData["Title"] = "Контакты";
 }
-
-<div class="row">
-    <div class="col-lg-7">
-        <h1 class="mb-4">Связаться</h1>
-
-        @if (TempData["ContactSuccess"] is string ok) {
-            <div class="alert alert-success">@ok</div>
-        }
-
-        <form asp-action="Contact" method="post" novalidate>
-            @Html.AntiForgeryToken()
-
-            <!-- Honeypot: скрытое поле, люди его не видят -->
-            <div style="position:absolute; left:-9999px;" aria-hidden="true">
-                <label asp-for="Website">Website</label>
-                <input asp-for="Website" tabindex="-1" autocomplete="off" />
-            </div>
-
-            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
-
-            <div class="mb-3">
-                <label asp-for="Name" class="form-label">Имя</label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Email" class="form-label">E-mail</label>
-                <input asp-for="Email" type="email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label asp-for="Message" class="form-label">Сообщение</label>
-                <textarea asp-for="Message" rows="6" class="form-control"></textarea>
-                <span asp-validation-for="Message" class="text-danger"></span>
-            </div>
-
-            <button type="submit" class="btn btn-primary">Отправить</button>
-        </form>
-    </div>
-
-    <div class="col-lg-5">
-        <h5 class="mt-4 mt-lg-0">Где меня найти</h5>
-        <ul class="list-unstyled">
-            <li>📧 <a href="mailto:hello@example.com">hello@example.com</a></li>
-            <li>💼 <a href="#">LinkedIn</a></li>
-            <li>🎮 <a href="#">itch.io</a></li>
-            <li>🐙 <a href="#">GitHub</a></li>
-        </ul>
-    </div>
-</div>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+<section class="max-w-3xl mx-auto px-4 py-16">
+    <h1 class="text-3xl font-bold mb-4">Контакты</h1>
+    <p class="text-slate-600">Страница в разработке.</p>
+</section>

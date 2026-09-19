@@ -1,0 +1,100 @@
+﻿@model Portfolio_game_dev.Models.Project
+
+@*
+    Карточка проекта для сетки на главной и /Projects.
+    Ожидает Project с заполненными: Title, Slug, CoverImageUrl, Genre, Role,
+    ShortDescription, TechStack, Tags, ReleaseDate.
+*@
+
+<article class="group bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
+
+    @* ── Обложка ───────────────────────────────────────────────── *@
+    <a asp-controller="Projects" asp-action="Details" asp-route-slug="@Model.Slug"
+       class="block relative overflow-hidden aspect-video bg-slate-100">
+
+        @if (!string.IsNullOrEmpty(Model.CoverImageUrl)) {
+            <img src="@Model.CoverImageUrl"
+                 alt="@Model.Title"
+                 loading="lazy"
+                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        }
+        else {
+            @* Заглушка, если обложки нет *@
+            <div class="w-full h-full flex items-center justify-center text-slate-300">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                </svg>
+            </div>
+        }
+
+        @* Бейдж жанра *@
+        @if (!string.IsNullOrEmpty(Model.Genre)) {
+            <span class="absolute top-3 right-3 bg-white/90 backdrop-blur text-xs font-medium text-brand-700 px-2.5 py-1 rounded-full border border-brand-100">
+                @Model.Genre
+            </span>
+        }
+    </a>
+
+    @* ── Контент ───────────────────────────────────────────────── *@
+    <div class="p-5 flex flex-col flex-1">
+
+        @* Теги *@
+        @if (Model.Tags.Any()) {
+            <div class="flex flex-wrap gap-1.5 mb-3">
+                @foreach (var tag in Model.Tags) {
+                    <a asp-controller="Projects" asp-action="Index" asp-route-tag="@tag.Slug"
+                       class="text-[11px] font-medium text-brand-700 bg-brand-50 hover:bg-brand-100 px-2 py-0.5 rounded-full transition">
+                        #@tag.Name
+                    </a>
+                }
+            </div>
+        }
+
+        @* Заголовок *@
+        <h3 class="text-lg font-bold text-slate-900 mb-1 group-hover:text-brand-600 transition-colors">
+            <a asp-controller="Projects" asp-action="Details" asp-route-slug="@Model.Slug">
+                @Model.Title
+            </a>
+        </h3>
+
+        @* Роль *@
+        @if (!string.IsNullOrEmpty(Model.Role)) {
+            <p class="text-xs text-slate-500 mb-3">
+                <span class="font-medium text-slate-600">Роль:</span> @Model.Role
+            </p>
+        }
+
+        @* Краткое описание *@
+        @if (!string.IsNullOrEmpty(Model.ShortDescription)) {
+            <p class="text-sm text-slate-600 leading-relaxed line-clamp-3 mb-4">
+                @Model.ShortDescription
+            </p>
+        }
+
+        @* Технологии *@
+        @if (Model.TechList.Any()) {
+            <div class="flex flex-wrap gap-1 mb-4">
+                @foreach (var tech in Model.TechList.Take(4)) {
+                    <span class="text-[11px] text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
+                        @tech
+                    </span>
+                }
+            </div>
+        }
+
+        @* Подвал карточки: ссылка + год *@
+        <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
+            <a asp-controller="Projects" asp-action="Details" asp-route-slug="@Model.Slug"
+               class="text-sm font-semibold text-brand-600 hover:text-brand-700 inline-flex items-center gap-1 transition">
+                Подробнее
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                </svg>
+            </a>
+
+            @if (Model.ReleaseDate.HasValue) {
+                <span class="text-xs text-slate-400">@Model.ReleaseDate.Value.Year</span>
+            }
+        </div>
+    </div>
+</article>

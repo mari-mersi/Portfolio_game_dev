@@ -2,44 +2,48 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Portfolio_game_dev.Data;
 using Portfolio_game_dev.Models;
+using Portfolio_game_dev.Services.Abstractions;
 using Portfolio_game_dev.ViewModels;
 
 namespace Portfolio_game_dev.Controllers;
 
 /// <summary>
 /// Публичный контроллер главной части сайта: главная, "О себе", контакты.
-/// TODO (День 2): заменить _db на IProjectService/ISkillService/IBlogService.
 /// </summary>
 public class HomeController : Controller {
     private readonly ILogger<HomeController> _logger;
-    private readonly AppDbContext _db;
+    private readonly AppDbContext _db;                    // для Contact (сохранение сообщения)
+    private readonly IProjectService _projects;
+    private readonly ISkillService _skills;
+    private readonly IBlogService _blog;
 
-    public HomeController(ILogger<HomeController> logger, AppDbContext db) {
+    public HomeController(
+        ILogger<HomeController> logger,
+        AppDbContext db,
+        IProjectService projects,
+        ISkillService skills,
+        IBlogService blog) {
         _logger = logger;
         _db = db;
+        _projects = projects;
+        _skills = skills;
+        _blog = blog;
     }
 
     public async Task<IActionResult> Index() {
         var vm = new HomeViewModel {
-            HeroTagline = "Game Designer, который превращает идеи в играбельные системы.",
-            HeroSubline = "5 лет в геймдизайне: от прототипов на Unity и Godot до релизов и плейтестов.",
+            Hero = new HeroViewModel {
+                Tagline = "Game Designer, который превращает идеи в играбельные системы.",
+                Subline = "5 лет в геймдизайне: от прототипов на Unity и Godot до релизов и плейтестов.",
+                PrimaryCtaText = "Смотреть проекты",
+                PrimaryCtaUrl = "/Projects",
+                SecondaryCtaText = "Скачать резюме",
+                SecondaryCtaUrl = "/Resume/Download",
+            },
 
-            FeaturedProjects = await _db.Projects
-                .Where(p => p.IsPublished && p.IsFeatured)
-                .OrderBy(p => p.SortOrder)
-                .Take(3)
-                .ToListAsync(),
-
-            TopSkills = await _db.Skills
-                .Where(s => s.IsFeatured)
-                .OrderBy(s => s.SortOrder)
-                .Take(8)
-                .ToListAsync(),
-
-            RecentExperience = await _db.Experiences
-                .OrderByDescending(e => e.StartDate)
-                .Take(3)
-                .ToListAsync()
+            FeaturedProjects = await _projects.GetFeaturedAsync(3),
+            FeaturedSkills = await _skills.GetTopAsync(8),
+            LatestPosts = await _blog.GetLatestAsync(3)
         };
 
         return View(vm);
