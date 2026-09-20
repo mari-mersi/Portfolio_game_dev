@@ -1,96 +1,71 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Portfolio_game_dev.Models;
+using Portfolio_game_dev.Services.Abstractions;
+using Portfolio_game_dev.ViewModels;
 
 namespace Portfolio_game_dev.Controllers;
 
 /// <summary>
-/// Портфолио — список и детали.
-/// TODO: заменить заглушки на IProjectService / AppDbContext.
+/// Портфолио: список опубликованных проектов, детальная страница, фильтр по тегу.
 /// </summary>
 public class ProjectsController : Controller {
-    // Временно — пустой список, чтобы контроллер компилировался.
-    // Когда подключишь БД, замени на _db.Projects.Include(...) или IProjectService.
-    private static List<Project> GetProjects() => new();
+    private readonly IProjectService _projects;
 
-    public IActionResult Index(string? tag, int page = 1) {
-        const int pageSize = 6;
+    public ProjectsController(IProjectService projects) {
+        _projects = projects;
+    }
 
-        var allProjects = GetProjects();
+    /// <summary>
+    /// GET: /Projects
+    /// GET: /Projects?tag=unity
+    /// GET: /Projects?tag=unreal-engine
+    /// GET: /Projects?page=1&amp;tag=unity
+    /// Список опубликованных проектов с фильтром по тегу и пагинацией.
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> Index(int page = 1, string? tag = null, CancellationToken ct = default) {
+        // Если пришёл пустой tag (например, ?tag=), приводим к null
+        var normalizedTag = string.IsNullOrWhiteSpace(tag) ? null : tag.Trim().ToLowerInvariant();
 
-        var allTags = allProjects
-            .SelectMany(p => p.Tags)
-            .Select(t => t.Name)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .OrderBy(t => t)
-            .ToList();
+        var paged = await _projects.GetPagedAsync(page, normalizedTag, pageSize: 6, ct);
+        var allTags = await _projects.GetAllTagsAsync(ct);
 
-        var filtered = string.IsNullOrWhiteSpace(tag)
-            ? allProjects
-            : allProjects
-                .Where(p => p.Tags.Any(t =>
-                    string.Equals(t.Name, tag, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
-
-        var totalProjects = filtered.Count;
-        var pagedProjects = filtered
-            .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .ToList();
-
-        var viewModel = new ProjectsIndexViewModel {
-            Projects = pagedProjects,
+        var vm = new ProjectsIndexViewModel {
+            Paged = paged,
             AllTags = allTags,
-            SelectedTag = tag,
-            CurrentPage = page,
-            TotalPages = (int)Math.Ceiling(totalProjects / (double)pageSize)
+            SelectedTag = normalizedTag
         };
 
-        return View(viewModel);
+        ViewData["Title"] = "Проекты";
+        ViewData["Description"] = "Портфолио игровых проектов: Unity, Unreal, Godot.";
+        return View(vm);
     }
 
-    [HttpGet("projects/{id:int}")]
-    public IActionResult Details(int id) {
-        var projects = GetProjects();
-        var project = projects.FirstOrDefault(p => p.Id == id);
-        if (project == null)
-            return NotFound();
-
-        var relatedProjects = projects
-            .Where(p => p.Id != project.Id &&
-                        p.Tags.Any(t => project.Tags.Any(pt => pt.Id == t.Id)))
-            .Take(3)
-            .ToList();
-
-        var viewModel = new ProjectDetailsViewModel {
-            Project = project,
-            RelatedProjects = relatedProjects
-        };
-
-        return View(viewModel);
-    }
-
+    /// <summary>
+    /// GET: /Projects/{slug}
+    /// GET: /Projects/cyber-odyssey
+    /// Детальная страница проекта. 404, если slug не найден или проект не опубликован.
+    /// </summary>
     [HttpGet("projects/{slug}")]
-    public IActionResult DetailsBySlug(string slug) {
-        var projects = GetProjects();
-        var project = projects.FirstOrDefault(p =>
-            string.Equals(p.Slug, slug, StringComparison.OrdinalIgnoreCase));
-        if (project == null)
+    public async Task<IActionResult> DetailsBySlug(string slug, CancellationToken ct = default) {
+        var vm = await _projects.GetBySlugAsync(slug, ct);
+        if (vm is null)
             return NotFound();
 
-        var relatedProjects = projects
-            .Where(p => p.Id != project.Id &&
-                        p.Tags.Any(t => project.Tags.Any(pt => pt.Id == t.Id)))
-            .Take(3)
-            .ToList();
-
-        var viewModel = new ProjectDetailsViewModel {
-            Project = project,
-            RelatedProjects = relatedProjects
-        };
-
-        return View("Details", viewModel);
+        ViewData["Title"] = vm.Project.Title;
+        ViewData["Description"] = vm.Project.ShortDescription ?? vm.Project.Title;
+        return View("Details", vm);
     }
 
-    public IActionResult ByTag(string tag) =>
-        RedirectToAction(nameof(Index), new { tag });
+    /// <summary>
+    /// GET: /Projects/ByTag/{tag}
+    /// Редирект на /Projects?tag={tag} — чтобы фильтр был в query string,
+    /// а не в пути (удобнее для кэша и SEO).
+    /// </summary>
+    [HttpGet("projects/tag/{tag}")]
+    public IActionResult ByTag(string tag) {
+        if (string.IsNullOrWhiteSpace(tag))
+            return RedirectToAction(nameof(Index));
+
+        return RedirectToAction(nameof(Index), new { tag = tag.Trim().ToLowerInvariant() });
+    }
 }

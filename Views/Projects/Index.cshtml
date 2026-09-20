@@ -1,34 +1,35 @@
-﻿@model Portfolio_game_dev.Models.ProjectsIndexViewModel
+﻿@model ProjectsIndexViewModel
 
 @{
-    ViewData["Title"] = "Портфолио проектов";
+    ViewData["Title"] = "Проекты";
+    ViewData["Description"] = "Портфолио игровых проектов: Unity, Unreal Engine, Godot.";
 }
 
-<div class="container mx-auto px-4 py-8">
-    <div class="mb-8">
-        <h1 class="text-4xl font-extrabold text-white mb-2">Проекты и портфолио</h1>
-        <p class="text-gray-400">Игры, прототипы, шейдеры и технические системы.</p>
-    </div>
+<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
 
-    <!-- Панель тегов / фильтров -->
-    <div class="flex flex-wrap gap-2 mb-8">
-        <a asp-controller="Projects" asp-action="Index" asp-route-tag=""
-           class="px-4 py-2 rounded-lg text-sm font-medium transition @(string.IsNullOrEmpty(Model.SelectedTag) ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30" : "bg-gray-800 text-gray-300 hover:bg-gray-700")">
-            Все
-        </a>
-        @foreach (var tag in Model.AllTags) {
-            var isActive = string.Equals(Model.SelectedTag, tag, System.StringComparison.OrdinalIgnoreCase);
-            <a asp-controller="Projects" asp-action="Index" asp-route-tag="@tag"
-               class="px-4 py-2 rounded-lg text-sm font-medium transition @(isActive ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/30" : "bg-gray-800 text-gray-300 hover:bg-gray-700")">
-                #@tag
-            </a>
-        }
-    </div>
+    @* ── Заголовок ──────────────────────────────────────────── *@
+    <header class="mb-10">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-3">
+            Проекты
+        </h1>
+        <p class="text-lg text-slate-600">
+            Игры, прототипы и технические системы. Всего: <strong>@Model.TotalCount</strong>.
+        </p>
+    </header>
 
-    <!-- Сетка проектов -->
+    @* ── Панель тегов ───────────────────────────────────────── *@
+    <partial name="_TagFilter" model="(Model.AllTags, Model.SelectedTag)" />
+
+    @* ── Сетка проектов ─────────────────────────────────────── *@
     @if (!Model.Projects.Any()) {
-        <div class="text-center py-16 bg-gray-800/40 rounded-xl border border-gray-700/50">
-            <p class="text-gray-400 text-lg">По выбранному тегу ничего не найдено.</p>
+        <div class="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-200">
+            <p class="text-slate-500 text-lg mb-2">По выбранному фильтру ничего не найдено.</p>
+            @if (!string.IsNullOrEmpty(Model.SelectedTag)) {
+                <a asp-controller="Projects" asp-action="Index"
+                   class="text-brand-600 hover:text-brand-700 font-medium text-sm">
+                    Сбросить фильтр
+                </a>
+            }
         </div>
     }
     else {
@@ -38,16 +39,10 @@
             }
         </div>
 
-        <!-- Пагинация -->
+        @* ── Пагинация ──────────────────────────────────────── *@
         @if (Model.TotalPages > 1) {
-            <div class="flex justify-center items-center gap-2 mt-12">
-                @for (int i = 1; i <= Model.TotalPages; i++) {
-                    <a asp-controller="Projects" asp-action="Index" asp-route-tag="@Model.SelectedTag" asp-route-page="@i"
-                       class="px-4 py-2 rounded-lg text-sm font-medium transition @(i == Model.CurrentPage ? "bg-indigo-600 text-white" : "bg-gray-800 text-gray-300 hover:bg-gray-700")">
-                        @i
-                    </a>
-                }
-            </div>
+            ViewData["PaginationTag"] = Model.SelectedTag;
+            <partial name="_Pagination" model="Model.Paged" />
         }
     }
-</div>
+</section>

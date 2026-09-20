@@ -64,7 +64,18 @@ public static class DbSeeder {
                     Title = "Cyber Odyssey",
                     Slug = "cyber-odyssey",
                     ShortDescription = "Футуристический 3D-экшн платформер",
-                    FullDescription = "## О проекте\n**Cyber Odyssey** — мой основной проект.",
+                    FullDescription = """
+                        ## О проекте
+                        **Cyber Odyssey** — мой основной проект.
+
+                        ### Реализованный функционал
+                        - Кастомная физика персонажа
+                        - Поведенческое дерево ИИ (Behavior Tree)
+                        - Оптимизация шейдеров и освещения
+
+                        ### Технические детали
+                        Проект использует URP с кастомными шейдерами. Система абилок построена на ScriptableObjects.
+                        """,
                     Genre = "Action / Platformer",
                     Role = "Lead Game Developer",
                     TechStack = "Unity, C#, Shader Graph",
@@ -76,7 +87,18 @@ public static class DbSeeder {
                     Title = "Shadows of Eldoria",
                     Slug = "shadows-of-eldoria",
                     ShortDescription = "Пошаговая тактическая RPG",
-                    FullDescription = "Тактический рогалик в тёмном фэнтези.",
+                    FullDescription = """
+                        ## О проекте
+                        Тактический рогалик в тёмном фэнтези с пошаговыми боями.
+
+                        ### Ключевые механики
+                        - Стихийные заклинания с комбинированием
+                        - Процедурно генерируемые подземелья
+                        - Система морали и репутации
+
+                        ### Особенности
+                        Использую **UE5** с C++ и Blueprints. Оптимизировано под мобильные устройства.
+                        """,
                     Genre = "Tactical RPG",
                     Role = "Game Designer & Developer",
                     TechStack = "Unreal Engine 5, C++",
@@ -88,7 +110,18 @@ public static class DbSeeder {
                     Title = "Pixel Dungeon",
                     Slug = "pixel-dungeon",
                     ShortDescription = "Пиксельный рогалик с процедурной генерацией",
-                    FullDescription = "## О проекте\nНебольшой рогалик для мобилок.",
+                    FullDescription = """
+                        ## О проекте
+                        Пиксельный рогалик с процедурной генерацией подземелий.
+
+                        ### Реализовано
+                        - Генерация уровней через клеточные автоматы
+                        - Система предметов и лут-таблиц
+                        - Мобильное управление
+
+                        ### Особенности
+                        Написан на **Godot 4** с GDScript. Графика — пиксель-арт.
+                        """,
                     Genre = "Roguelike",
                     Role = "Solo Developer",
                     TechStack = "Godot, GDScript",

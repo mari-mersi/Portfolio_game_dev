@@ -9,7 +9,7 @@
 <article class="group bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 flex flex-col h-full">
 
     @* ── Обложка ───────────────────────────────────────────────── *@
-    <a asp-controller="Projects" asp-action="Details" asp-route-slug="@Model.Slug"
+    <a asp-controller="Projects" asp-action="DetailsBySlug" asp-route-slug="@Model.Slug"
        class="block relative overflow-hidden aspect-video bg-slate-100">
 
         @if (!string.IsNullOrEmpty(Model.CoverImageUrl)) {
@@ -52,7 +52,7 @@
 
         @* Заголовок *@
         <h3 class="text-lg font-bold text-slate-900 mb-1 group-hover:text-brand-600 transition-colors">
-            <a asp-controller="Projects" asp-action="Details" asp-route-slug="@Model.Slug">
+            <a asp-controller="Projects" asp-action="DetailsBySlug" asp-route-slug="@Model.Slug">
                 @Model.Title
             </a>
         </h3>
@@ -84,7 +84,7 @@
 
         @* Подвал карточки: ссылка + год *@
         <div class="mt-auto pt-4 border-t border-slate-100 flex items-center justify-between">
-            <a asp-controller="Projects" asp-action="Details" asp-route-slug="@Model.Slug"
+            <a asp-controller="Projects" asp-action="DetailsBySlug" asp-route-slug="@Model.Slug"
                class="text-sm font-semibold text-brand-600 hover:text-brand-700 inline-flex items-center gap-1 transition">
                 Подробнее
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

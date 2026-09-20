@@ -36,7 +36,16 @@ builder.Services.ConfigureApplicationCookie(o => {
 });
 
 // ── MVC ──────────────────────────────────────────────────────────────
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddRazorOptions(options => {
+        // Искать partial view'хи в Views/Shared/Partials/ по короткому имени
+        options.ViewLocationFormats.Add("/Views/{1}/Partials/{0}.cshtml");
+        options.ViewLocationFormats.Add("/Views/Shared/Partials/{0}.cshtml");
+
+        // И для Areas (пригодится в День 8+)
+        options.AreaViewLocationFormats.Add("/Areas/{2}/Views/{1}/Partials/{0}.cshtml");
+        options.AreaViewLocationFormats.Add("/Areas/{2}/Views/Shared/Partials/{0}.cshtml");
+    });
 
 // ── Наши сервисы ─────────────────────────────────────────────────────
 builder.Services.AddScoped<IPdfResumeService, PdfResumeService>();

@@ -1,0 +1,93 @@
+﻿@using Portfolio_game_dev.ViewModels.Shared
+@model dynamic
+
+@*
+    Партиал пагинации.
+    Ожидает любой PagedResult<T> (читает только счётчики Page/TotalPages/HasPrevious/HasNext).
+    Дополнительно: ViewData["PaginationTag"] — текущий фильтр (string?).
+*@
+
+@{
+    var currentTag = ViewData["PaginationTag"] as string;
+
+    int current = (int)Model.Page;
+    int total = (int)Model.TotalPages;
+    int windowStart = Math.Max(1, current - 2);
+    int windowEnd = Math.Min(total, current + 2);
+}
+
+@if (total > 1) {
+    <nav aria-label="Пагинация" class="flex items-center justify-center gap-1 mt-12">
+
+        @* ─── Назад ─────────────────────────────────────────── *@
+        @if ((bool)Model.HasPrevious) {
+            <a asp-controller="Projects" asp-action="Index"
+               asp-route-tag="@currentTag" asp-route-page="@(current - 1)"
+               class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:text-brand-600 transition"
+               aria-label="Предыдущая страница">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </a>
+        }
+        else {
+            <span class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-100 bg-slate-50 text-slate-300 cursor-not-allowed">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+            </span>
+        }
+
+        @* ─── Первая + многоточие ───────────────────────────── *@
+        @if (windowStart > 1) {
+            <a asp-controller="Projects" asp-action="Index"
+               asp-route-tag="@currentTag" asp-route-page="1"
+               class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:border-brand-300 hover:text-brand-600 transition">1</a>
+            if (windowStart > 2) {
+                <span class="px-2 text-slate-400">…</span>
+            }
+        }
+
+        @* ─── Окно страниц ───────────────────────────────────── *@
+        @for (int i = windowStart; i <= windowEnd; i++) {
+            var pageNumber = i;
+            if (pageNumber == current) {
+                <span class="inline-flex items-center justify-center w-9 h-9 rounded-md bg-brand-600 text-white text-sm font-semibold">@pageNumber</span>
+            }
+            else {
+                <a asp-controller="Projects" asp-action="Index"
+                   asp-route-tag="@currentTag" asp-route-page="@pageNumber"
+                   class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:border-brand-300 hover:text-brand-600 transition">@pageNumber</a>
+            }
+        }
+
+        @* ─── Многоточие + последняя ─────────────────────────── *@
+        @if (windowEnd < total) {
+            if (windowEnd < total - 1) {
+                <span class="px-2 text-slate-400">…</span>
+            }
+            <a asp-controller="Projects" asp-action="Index"
+               asp-route-tag="@currentTag" asp-route-page="@total"
+               class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:border-brand-300 hover:text-brand-600 transition">@total</a>
+        }
+
+        @* ─── Вперёд ────────────────────────────────────────── *@
+        @if ((bool)Model.HasNext) {
+            <a asp-controller="Projects" asp-action="Index"
+               asp-route-tag="@currentTag" asp-route-page="@(current + 1)"
+               class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:text-brand-600 transition"
+               aria-label="Следующая страница">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </a>
+        }
+        else {
+            <span class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-100 bg-slate-50 text-slate-300 cursor-not-allowed">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                </svg>
+            </span>
+        }
+    </nav>
+}

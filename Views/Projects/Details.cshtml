@@ -1,106 +1,180 @@
-﻿@model Portfolio_game_dev.Models.ProjectDetailsViewModel
+﻿@using Portfolio_game_dev.Services
+@model Portfolio_game_dev.ViewModels.ProjectDetailsViewModel
 
 @{
     ViewData["Title"] = Model.Project.Title;
+    ViewData["Description"] = Model.Project.ShortDescription ?? Model.Project.Title;
+    var project = Model.Project;
 }
 
-<div class="container mx-auto px-4 py-8 max-w-5xl">
-    <a asp-controller="Projects" asp-action="Index" class="inline-flex items-center text-indigo-400 hover:text-indigo-300 mb-6 text-sm font-medium">
-        &larr; Назад к списку проектов
+<article class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+    @* ── Назад ──────────────────────────────────────────────── *@
+    <a asp-controller="Projects" asp-action="Index"
+       class="inline-flex items-center gap-1 text-sm font-medium text-slate-500 hover:text-brand-600 mb-8 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+        Назад к проектам
     </a>
 
-    <!-- Заголовок -->
-    <div class="mb-6">
-        <div class="flex flex-wrap gap-2 mb-3">
-            @foreach (var tag in Model.Project.Tags) {
-                <span class="text-xs bg-indigo-950/80 text-indigo-300 px-2.5 py-1 rounded border border-indigo-800/50">
-                    #@tag
-                </span>
-            }
+    @* ── Заголовок ──────────────────────────────────────────── *@
+    <header class="mb-8">
+        @if (project.Tags.Any()) {
+            <div class="flex flex-wrap gap-2 mb-4">
+                @foreach (var tag in project.Tags) {
+                    <a asp-controller="Projects" asp-action="Index" asp-route-tag="@tag.Slug"
+                       class="text-xs font-medium text-brand-700 bg-brand-50 hover:bg-brand-100 px-2.5 py-1 rounded-full transition">
+                        #@tag.Name
+                    </a>
+                }
+            </div>
+        }
+
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-4">
+            @project.Title
+        </h1>
+
+        @if (!string.IsNullOrEmpty(project.ShortDescription)) {
+            <p class="text-lg sm:text-xl text-slate-600 leading-relaxed">
+                @project.ShortDescription
+            </p>
+        }
+    </header>
+
+    @* ── Обложка ────────────────────────────────────────────── *@
+    @if (!string.IsNullOrEmpty(project.CoverImageUrl)) {
+        <div class="mb-10 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
+            <img src="@project.CoverImageUrl" alt="@project.Title"
+                 class="w-full max-h-[520px] object-cover" />
         </div>
-        <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-3">@Model.Project.Title</h1>
-        <p class="text-xl text-gray-300">@Model.Project.ShortDescription</p>
-    </div>
+    }
 
-    <!-- Обложка -->
-    <div class="mb-8 rounded-2xl overflow-hidden shadow-2xl border border-gray-700">
-        <img src="@Model.Project.CoverImageUrl" alt="@Model.Project.Title" class="w-full max-h-[500px] object-cover" />
-    </div>
-
-    <!-- Информация и контент -->
+    @* ── Метаданные + описание ──────────────────────────────── *@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-        <!-- Левая панель с метаданными и ссылками -->
-        <div class="bg-gray-800/90 p-6 rounded-xl border border-gray-700 h-fit space-y-5">
-            @if (!string.IsNullOrEmpty(Model.Project.Genre)) {
-                <div>
-                    <h4 class="text-xs font-semibold uppercase text-gray-400 mb-1">Жанр</h4>
-                    <p class="text-white text-sm font-medium">@Model.Project.Genre</p>
-                </div>
-            }
 
-            @if (!string.IsNullOrEmpty(Model.Project.Role)) {
-                <div>
-                    <h4 class="text-xs font-semibold uppercase text-gray-400 mb-1">Роль в проекте</h4>
-                    <p class="text-white text-sm font-medium">@Model.Project.Role</p>
-                </div>
-            }
+        @* Сайдбар с метаданными *@
+        <aside class="lg:col-span-1 lg:order-last">
+            <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-5 sticky top-24">
+                @if (!string.IsNullOrEmpty(project.Genre)) {
+                    <div>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Жанр</h3>
+                        <p class="text-sm font-medium text-slate-800">@project.Genre</p>
+                    </div>
+                }
 
-            @if (Model.Project.TechList.Any()) {
-                <div>
-                    <h4 class="text-xs font-semibold uppercase text-gray-400 mb-2">Технологии</h4>
-                    <div class="flex flex-wrap gap-1">
-                        @foreach (var tech in Model.Project.TechList) {
-                            <span class="text-xs bg-gray-700 text-gray-200 px-2.5 py-1 rounded">@tech</span>
+                @if (!string.IsNullOrEmpty(project.Role)) {
+                    <div>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Роль</h3>
+                        <p class="text-sm font-medium text-slate-800">@project.Role</p>
+                    </div>
+                }
+
+                @if (project.ReleaseDate.HasValue) {
+                    <div>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Дата релиза</h3>
+                        <p class="text-sm font-medium text-slate-800">
+                            @project.ReleaseDate.Value.ToString("d MMMM yyyy")
+                        </p>
+                    </div>
+                }
+
+                @if (project.TechList.Any()) {
+                    <div>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Стек</h3>
+                        <div class="flex flex-wrap gap-1.5">
+                            @foreach (var tech in project.TechList) {
+                                <span class="text-xs text-slate-600 bg-slate-100 px-2 py-1 rounded">@tech</span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                @* ── Ссылки ──────────────────────────────────── *@
+                @if (!string.IsNullOrEmpty(project.DemoUrl) ||
+                                !string.IsNullOrEmpty(project.SteamUrl) ||
+                                !string.IsNullOrEmpty(project.ItchIoUrl) ||
+                                !string.IsNullOrEmpty(project.GooglePlayUrl) ||
+                                !string.IsNullOrEmpty(project.GitHubUrl) ||
+                                !string.IsNullOrEmpty(project.RepoUrl)) {
+                    <div class="pt-5 border-t border-slate-100 flex flex-col gap-2">
+                        @if (!string.IsNullOrEmpty(project.DemoUrl)) {
+                            <a href="@project.DemoUrl" target="_blank" rel="noopener noreferrer"
+                               class="w-full text-center bg-brand-600 hover:bg-brand-700 text-white font-medium py-2 px-4 rounded-lg text-sm transition">
+                                Играть в демо
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(project.SteamUrl)) {
+                            <a href="@project.SteamUrl" target="_blank" rel="noopener noreferrer"
+                               class="w-full text-center bg-sky-600 hover:bg-sky-700 text-white font-medium py-2 px-4 rounded-lg text-sm transition">
+                                Steam
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(project.ItchIoUrl)) {
+                            <a href="@project.ItchIoUrl" target="_blank" rel="noopener noreferrer"
+                               class="w-full text-center bg-rose-600 hover:bg-rose-700 text-white font-medium py-2 px-4 rounded-lg text-sm transition">
+                                itch.io
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(project.GooglePlayUrl)) {
+                            <a href="@project.GooglePlayUrl" target="_blank" rel="noopener noreferrer"
+                               class="w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 px-4 rounded-lg text-sm transition">
+                                Google Play
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(project.GitHubUrl)) {
+                            <a href="@project.GitHubUrl" target="_blank" rel="noopener noreferrer"
+                               class="w-full text-center bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 px-4 rounded-lg text-sm transition">
+                                GitHub
+                            </a>
+                        }
+                        else if (!string.IsNullOrEmpty(project.RepoUrl)) {
+                            <a href="@project.RepoUrl" target="_blank" rel="noopener noreferrer"
+                               class="w-full text-center bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 px-4 rounded-lg text-sm transition">
+                                Репозиторий
+                            </a>
                         }
                     </div>
+                }
+            </div>
+        </aside>
+
+        @* Основной контент — markdown *@
+        <div class="lg:col-span-2">
+            @if (!string.IsNullOrEmpty(project.FullDescription)) {
+                <div class="prose prose-slate max-w-none
+                                prose-headings:font-bold prose-headings:text-slate-900
+                                prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+                                prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+                                prose-p:text-slate-700 prose-p:leading-relaxed
+                                prose-a:text-brand-600 prose-a:no-underline hover:prose-a:underline
+                                prose-code:text-brand-700 prose-code:bg-brand-50 prose-code:px-1 prose-code:rounded
+                                prose-pre:bg-slate-900 prose-pre:text-slate-100
+                                prose-ul:list-disc prose-ul:pl-6
+                                prose-ol:list-decimal prose-ol:pl-6">
+                    @Html.Raw(MarkdownRenderer.ToHtml(project.FullDescription))
                 </div>
             }
-
-            <div>
-                <h4 class="text-xs font-semibold uppercase text-gray-400 mb-1">Дата выхода</h4>
-                <p class="text-white text-sm font-medium">@Model.Project.ReleaseDate?.ToString("dd MMMM yyyy")</p>
-            </div>
-
-            <!-- Внешние ссылки -->
-            <div class="pt-4 border-t border-gray-700 flex flex-col gap-2">
-                @if (!string.IsNullOrEmpty(Model.Project.SteamUrl)) {
-                    <a href="@Model.Project.SteamUrl" target="_blank" rel="noopener noreferrer" class="w-full text-center bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 px-4 rounded-lg text-sm transition">
-                        Страница в Steam
-                    </a>
-                }
-                @if (!string.IsNullOrEmpty(Model.Project.ItchIoUrl)) {
-                    <a href="@Model.Project.ItchIoUrl" target="_blank" rel="noopener noreferrer" class="w-full text-center bg-red-600 hover:bg-red-500 text-white font-medium py-2 px-4 rounded-lg text-sm transition">
-                        Посмотреть на Itch.io
-                    </a>
-                }
-                @if (!string.IsNullOrEmpty(Model.Project.GooglePlayUrl)) {
-                    <a href="@Model.Project.GooglePlayUrl" target="_blank" rel="noopener noreferrer" class="w-full text-center bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 px-4 rounded-lg text-sm transition">
-                        Google Play
-                    </a>
-                }
-                @if (!string.IsNullOrEmpty(Model.Project.GitHubUrl)) {
-                    <a href="@Model.Project.GitHubUrl" target="_blank" rel="noopener noreferrer" class="w-full text-center bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg text-sm transition">
-                        Репозиторий на GitHub
-                    </a>
-                }
-            </div>
-        </div>
-
-        <!-- Описание Markdown -->
-        <div class="lg:col-span-2 text-gray-300 space-y-4 leading-relaxed prose prose-invert max-w-none">
-            @Html.Raw(Model.Project.FullDescription.Replace("\n", "<br/>"))
+            else if (!string.IsNullOrEmpty(project.DescriptionMd)) {
+                <div class="prose prose-slate max-w-none">
+                    @Html.Raw(MarkdownRenderer.ToHtml(project.DescriptionMd))
+                </div>
+            }
         </div>
     </div>
 
-    <!-- Похожие проекты -->
+    @* ── Галерея ────────────────────────────────────────────── *@
+    <partial name="_ProjectGallery" model="project.Media.ToList()" />
+
+    @* ── Похожие проекты ───────────────────────────────────── *@
     @if (Model.RelatedProjects.Any()) {
-        <div class="pt-8 border-t border-gray-800">
-            <h3 class="text-2xl font-bold text-white mb-6">Другие проекты</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <section class="mt-16 pt-10 border-t border-slate-200">
+            <h2 class="text-2xl font-bold text-slate-900 mb-6">Другие проекты</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @foreach (var related in Model.RelatedProjects) {
                     <partial name="_ProjectCard" model="related" />
                 }
             </div>
-        </div>
+        </section>
     }
-</div>
+</article>

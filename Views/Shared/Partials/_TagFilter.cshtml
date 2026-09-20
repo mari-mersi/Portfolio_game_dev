@@ -1,0 +1,29 @@
+﻿@using Portfolio_game_dev.Models
+@model (List<Tag> Tags, string? SelectedTag)
+
+@*
+    Панель фильтров по тегам.
+    Ожидает кортеж (List<Tag>, string? SelectedTag).
+*@
+
+<div class="flex flex-wrap gap-2 mb-8">
+    @{
+        var isAllActive = string.IsNullOrEmpty(Model.SelectedTag);
+    }
+    <a asp-controller="Projects" asp-action="Index"
+       class="px-4 py-2 rounded-lg text-sm font-medium transition @(isAllActive
+                     ? "bg-brand-600 text-white shadow-sm"
+                     : "bg-white border border-slate-200 text-slate-600 hover:border-brand-300 hover:text-brand-600")">
+        Все
+    </a>
+
+    @foreach (var tag in Model.Tags) {
+        var isActive = string.Equals(Model.SelectedTag, tag.Slug, StringComparison.OrdinalIgnoreCase);
+        <a asp-controller="Projects" asp-action="Index" asp-route-tag="@tag.Slug"
+           class="px-4 py-2 rounded-lg text-sm font-medium transition @(isActive
+                             ? "bg-brand-600 text-white shadow-sm"
+                             : "bg-white border border-slate-200 text-slate-600 hover:border-brand-300 hover:text-brand-600")">
+        #@tag.Name
+    </a>
+        }
+</div>

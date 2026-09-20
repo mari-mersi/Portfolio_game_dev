@@ -3,8 +3,9 @@
 namespace Portfolio_game_dev.Services {
     public static class MarkdownRenderer {
         private static readonly MarkdownPipeline _pipeline = new MarkdownPipelineBuilder()
-            .UseAdvancedExtensions()   // таблицы, сноски, автоссылки и т.д.
+            .UseAdvancedExtensions()
             .UseSoftlineBreakAsHardlineBreak()
+            .DisableHtml()          // ← добавили: HTML в markdown игнорируется
             .Build();
 
         public static string ToHtml(string markdown) {
