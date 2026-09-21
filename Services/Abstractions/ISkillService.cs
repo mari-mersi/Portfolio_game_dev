@@ -11,4 +11,10 @@ public interface ISkillService {
     /// Максимум <paramref name="count"/> штук.
     /// </summary>
     Task<List<Skill>> GetTopAsync(int count = 8, CancellationToken ct = default);
+
+    /// <summary>
+    /// Все навыки, сгруппированные по категории.
+    /// Внутри категории — по SortOrder, затем по убыванию Level.
+    /// </summary>
+    Task<Dictionary<string, List<Skill>>> GetGroupedByCategoryAsync(CancellationToken ct = default);
 }

@@ -53,6 +53,7 @@ builder.Services.AddScoped<IPdfResumeService, PdfResumeService>();
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ISkillService, SkillService>();
 builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IExperienceService, ExperienceService>();
 
 var app = builder.Build();
 

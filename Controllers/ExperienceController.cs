@@ -1,22 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Portfolio_game_dev.Models;
-using Portfolio_game_dev.Services;
-using Portfolio_game_dev.ViewModels;
+using Portfolio_game_dev.Services.Abstractions;
 
-namespace Portfolio_game_dev.Controllers {
+namespace Portfolio_game_dev.Controllers;
+
+/// <summary>
+/// Таймлайн опыта работы.
+/// </summary>
+public class ExperienceController : Controller {
+    private readonly IExperienceService _experience;
+
+    public ExperienceController(IExperienceService experience) {
+        _experience = experience;
+    }
+
     /// <summary>
-    /// Таймлайн опыта работы.
+    /// GET: /experience
     /// </summary>
-    public class ExperienceController : Controller {
-        
+    [HttpGet]
+    public async Task<IActionResult> Index(CancellationToken ct = default) {
+        var vm = await _experience.GetTimelineAsync(ct);
 
-        public ExperienceController() {
-        }
-
-        // GET: /experience
-        public async Task<IActionResult> Index() {
-
-            return View();
-        }
+        ViewData["Title"] = "Опыт работы";
+        ViewData["Description"] = "Таймлайн студий и проектов, в которых я работал.";
+        return View(vm);
     }
 }

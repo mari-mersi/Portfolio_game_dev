@@ -121,14 +121,13 @@
     <script>
         // Инициализация AOS (анимации появления при скролле).
         // Отключаем на мобильных, чтобы не мешало — можно убрать условие, если нужно.
-        if (window.matchMedia('(min-width: 768px)').matches) {
-            AOS.init({
-                duration: 600,
-                easing: 'ease-out-cubic',
-                once: true,
-                offset: 60,
-            });
-        }
+        AOS.init({
+            duration: 600,
+            easing: 'ease-out-cubic',
+            once: true,
+            offset: 60,
+            disable: 'phone',
+        });
     </script>
 
     @* Минимальный JS для burger-меню *@

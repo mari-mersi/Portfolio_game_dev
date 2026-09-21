@@ -1,187 +1,82 @@
 ﻿@model Portfolio_game_dev.ViewModels.ExperienceIndexViewModel
+
 @{
     ViewData["Title"] = "Опыт работы";
+    ViewData["Description"] = "Таймлайн студий и проектов, в которых я работал.";
 }
 
-<div class="d-flex justify-content-between align-items-end flex-wrap mb-5">
-    <div>
-        <h1 class="mb-1">Опыт работы</h1>
-        <p class="text-muted mb-0">Таймлайн проектов и студий.</p>
-    </div>
+<section class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
 
-    @if (Model.TotalMonths > 0)
-    {
-        <div class="text-muted small">
-            <div><strong>@Model.TotalExperienceText</strong> общего стажа</div>
-            <div>@Model.CompaniesCount @(Model.CompaniesCount == 1 ? "компания" : "компаний")</div>
+    @* ── Заголовок + статистика ────────────────────────────── *@
+    <header class="mb-12 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4"
+            data-aos="fade-up">
+        <div>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-3">
+                Опыт работы
+            </h1>
+            <p class="text-lg text-slate-600">
+                Таймлайн студий и проектов.
+            </p>
+        </div>
+
+        @if (Model.TotalMonths > 0) {
+            <div class="text-sm text-slate-500 sm:text-right">
+                <div class="text-2xl font-bold text-slate-900">@Model.TotalExperienceText</div>
+                @{
+                    string CompanyWord(int n) {
+                        var mod10 = n % 10;
+                        var mod100 = n % 100;
+                        if (mod10 == 1 && mod100 != 11)
+                            return "компания";
+                        if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14))
+                            return "компании";
+                        return "компаний";
+                    }
+                }
+                <div>всего: @Model.CompaniesCount @CompanyWord(Model.CompaniesCount)</div>
+            </div>
+        }
+    </header>
+
+    @* ── Пусто ──────────────────────────────────────────────── *@
+    @if (!Model.Items.Any()) {
+        <div class="text-center py-16 bg-white rounded-2xl border border-dashed border-slate-200">
+            <p class="text-slate-500">Пока нет записей об опыте — скоро добавлю.</p>
         </div>
     }
-</div>
+    else {
+        @* ── Таймлайн ──────────────────────────────────────── *@
+        <div class="relative">
+            @* Вертикальная линия *@
+            <div class="absolute left-2 top-2 bottom-2 w-px bg-slate-200"></div>
 
-@if (!Model.Items.Any())
-{
-    <div class="alert alert-info">Пока нет записей об опыте — скоро добавлю.</div>
-}
-else
-{
-    <div class="timeline">
-        @foreach (var group in Model.Groups)
-        {
-            <div class="timeline-year">
-                <span class="timeline-year-label">@group.Year</span>
-            </div>
-
-            foreach (var exp in group.Items)
-            {
-                <div class="timeline-item">
-                    <div class="timeline-dot @(exp.IsCurrent ? "timeline-dot-current" : "")"></div>
-
-                    <div class="card shadow-sm mb-4">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between flex-wrap align-items-start mb-2">
-                                <div>
-                                    <h5 class="card-title mb-1">
-                                        @exp.Position
-                                        @if (exp.IsCurrent)
-                                        {
-                                            <span class="badge bg-success ms-2 align-middle">сейчас</span>
-                                        }
-                                    </h5>
-                                    <div class="text-muted">
-                                        <strong>@exp.Company</strong>
-                                        @if (!string.IsNullOrWhiteSpace(exp.EmploymentType))
-                                        {
-                                            @:· @exp.EmploymentType
-                                        }
-                                        @if (!string.IsNullOrWhiteSpace(exp.Location))
-                                        {
-                                            @:· @exp.Location
-                                        }
-                                    </div>
-                                </div>
-
-                                <div class="text-end text-muted small">
-                                    <div>@exp.Period</div>
-                                    <div>@exp.DurationText</div>
-                                </div>
-                            </div>
-
-                            @if (!string.IsNullOrWhiteSpace(exp.Description))
-                            {
-                                <p class="mb-2">@exp.Description</p>
-                            }
-
-                            @if (exp.Highlights.Any())
-                            {
-                                <ul class="mb-3">
-                                    @foreach (var h in exp.Highlights)
-                                    {
-                                        <li>@h</li>
-                                    }
-                                </ul>
-                            }
-
-                            @if (exp.TechList.Any())
-                            {
-                                <div class="d-flex flex-wrap gap-1">
-                                    @foreach (var tech in exp.TechList)
-                                    {
-                                        <span class="badge bg-light text-dark border">@tech</span>
-                                    }
-                                </div>
-                            }
-                        </div>
+            @foreach (var group in Model.Groups) {
+                @* Год *@
+                <div class="relative mb-6 pl-10" data-aos="fade-up">
+                    <div class="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 uppercase tracking-wider bg-slate-50 px-3 py-1 rounded-full border border-slate-200">
+                        @group.Year
                     </div>
                 </div>
-            }
-        }
-    </div>
 
-    @if (Model.AllTech.Any())
-    {
-        <section class="mt-5">
-            <h3 class="mb-3">Все инструменты и технологии</h3>
-            <div class="d-flex flex-wrap gap-1">
-                @foreach (var tech in Model.AllTech)
-                {
-                    <span class="badge bg-secondary">@tech</span>
+                @* Элементы года *@
+                foreach (var exp in group.Items) {
+                    <partial name="_TimelineItem" model="exp" />
                 }
-            </div>
-        </section>
+            }
+        </div>
+
+        @* ── Все технологии ────────────────────────────────── *@
+        @if (Model.AllTech.Any()) {
+            <section class="mt-16 pt-10 border-t border-slate-200" data-aos="fade-up">
+                <h2 class="text-2xl font-bold text-slate-900 mb-5">Все инструменты и технологии</h2>
+                <div class="flex flex-wrap gap-2">
+                    @foreach (var tech in Model.AllTech) {
+                        <span class="text-sm text-slate-700 bg-white border border-slate-200 px-3 py-1.5 rounded-full hover:border-brand-300 hover:text-brand-700 transition">
+                            @tech
+                        </span>
+                    }
+                </div>
+            </section>
+        }
     }
-}
-
-@section Scripts {
-    <style>
-        .timeline {
-            position: relative;
-            padding-left: 2.5rem;
-        }
-
-        .timeline::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0.9rem;
-            width: 2px;
-            background: #e5e5e5;
-        }
-
-        .timeline-year {
-            position: relative;
-            margin: 1.5rem 0 1rem;
-        }
-
-        .timeline-year-label {
-            position: relative;
-            left: -2.5rem;
-            display: inline-block;
-            background: #fff;
-            padding: 0 .5rem;
-            font-weight: 600;
-            color: #6c757d;
-            font-size: .875rem;
-            letter-spacing: .05em;
-        }
-
-        .timeline-item {
-            position: relative;
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: -1.78rem;
-            top: 1.4rem;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #adb5bd;
-            border: 2px solid #fff;
-            box-shadow: 0 0 0 2px #adb5bd;
-        }
-
-        .timeline-dot-current {
-            background: #198754;
-            box-shadow: 0 0 0 2px #198754;
-        }
-
-        @@media (max-width: 576px) {
-            .timeline {
-                padding-left: 1.75rem;
-            }
-
-            .timeline::before {
-                left: 0.5rem;
-            }
-
-            .timeline-dot {
-                left: -1.38rem;
-            }
-
-            .timeline-year-label {
-                left: -1.75rem;
-            }
-        }
-    </style>
-}
+</section>

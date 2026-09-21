@@ -1,0 +1,76 @@
+﻿@model Portfolio_game_dev.Models.Experience
+
+@*
+    Один элемент вертикального таймлайна.
+    Ожидает Experience с: Company, Position, EmploymentType, Location,
+    StartDate, EndDate/IsCurrent, Description, Highlights, TechList.
+*@
+
+<div class="relative pl-10 pb-10 last:pb-0">
+
+    @* Точка на линии *@
+    <div class="absolute left-[7px] top-1.5 w-3 h-3 rounded-full border-2 border-white
+                @(Model.IsCurrent ? "bg-emerald-500" : "bg-slate-300")">
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm
+                hover:shadow-md transition"
+         data-aos="fade-up">
+
+        @* ── Заголовок: позиция + период ───────────────────── *@
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
+            <div>
+                <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2 flex-wrap">
+                    @Model.Position
+                    @if (Model.IsCurrent) {
+                        <span class="inline-flex items-center gap-1 text-xs font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                            <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                            сейчас
+                        </span>
+                    }
+                </h3>
+                <p class="text-sm text-slate-500 mt-0.5">
+                    <span class="font-medium text-slate-700">@Model.Company</span>
+                    @if (!string.IsNullOrWhiteSpace(Model.EmploymentType)) {
+                        <text> · @Model.EmploymentType</text>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Model.Location)) {
+                        <text> · @Model.Location</text>
+                    }
+                </p>
+            </div>
+            <div class="text-sm text-slate-500 sm:text-right sm:whitespace-nowrap">
+                <div class="font-medium text-slate-700">@Model.Period</div>
+                <div class="text-xs">@Model.DurationText</div>
+            </div>
+        </div>
+
+        @* ── Описание ──────────────────────────────────────── *@
+        @if (!string.IsNullOrWhiteSpace(Model.Description)) {
+            <p class="text-sm text-slate-700 leading-relaxed mb-3">@Model.Description</p>
+        }
+
+        @* ── Достижения ────────────────────────────────────── *@
+        @if (Model.Highlights.Any()) {
+            <ul class="space-y-1.5 mb-4">
+                @foreach (var h in Model.Highlights) {
+                    <li class="flex items-start gap-2 text-sm text-slate-700">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>@h</span>
+                    </li>
+                }
+            </ul>
+        }
+
+        @* ── Стек ──────────────────────────────────────────── *@
+        @if (Model.TechList.Any()) {
+            <div class="flex flex-wrap gap-1.5">
+                @foreach (var tech in Model.TechList) {
+                    <span class="text-xs text-slate-600 bg-slate-100 px-2 py-0.5 rounded">@tech</span>
+                }
+            </div>
+        }
+    </div>
+</div>

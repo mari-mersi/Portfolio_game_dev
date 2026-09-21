@@ -1,19 +1,26 @@
 ﻿@model Portfolio_game_dev.ViewModels.SkillsIndexViewModel
+
 @{
-    ViewData["Title"] ??= "Навыки и стек";
+    ViewData["Title"] = "Навыки и стек";
+    ViewData["Description"] = "Технологии и инструменты: Unity, C#, Unreal Engine, Godot.";
 }
 
-<section class="max-w-6xl mx-auto px-4 py-12">
-    <header class="mb-10">
-        <h1 class="text-4xl font-bold tracking-tight">Навыки и стек</h1>
-        <p class="text-gray-500 mt-2">
-            Всего навыков: <span class="font-semibold">@Model.TotalSkills</span>
+<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+    @* ── Заголовок ──────────────────────────────────────────── *@
+    <header class="mb-12" data-aos="fade-up">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-3">
+            Навыки и стек
+        </h1>
+        <p class="text-lg text-slate-600">
+            Всего навыков: <strong>@Model.TotalSkills</strong>.
         </p>
     </header>
 
+    @* ── Ключевые навыки ───────────────────────────────────── *@
     @if (Model.FeaturedSkills.Any()) {
-        <section class="mb-12">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700">Ключевые</h2>
+        <section class="mb-14" data-aos="fade-up">
+            <h2 class="text-2xl font-bold text-slate-900 mb-5">Ключевые</h2>
             <div class="flex flex-wrap gap-3">
                 @foreach (var skill in Model.FeaturedSkills) {
                     <partial name="_SkillBadge" model="skill" />
@@ -22,34 +29,38 @@
         </section>
     }
 
+    @* ── Категории ─────────────────────────────────────────── *@
     @foreach (var group in Model.Categories) {
-        <section class="mb-10">
-            <div class="flex items-baseline justify-between mb-4">
-                <h2 class="text-2xl font-semibold">@group.Category</h2>
-                <span class="text-sm text-gray-400">
-                    средний уровень: @group.AverageLevel.ToString("0.0") / 5
+        <section class="mb-12" data-aos="fade-up">
+            <div class="flex items-baseline justify-between mb-5">
+                <h2 class="text-2xl font-bold text-slate-900">@group.Category</h2>
+                <span class="text-sm text-slate-400">
+                    средний уровень: <strong class="text-slate-600">@group.AverageLevel.ToString("0.0")</strong> / 5
                 </span>
             </div>
 
             <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach (var skill in group.Skills) {
-                    <div class="border rounded-xl p-4 bg-white shadow-sm hover:shadow-md transition">
+                    <div class="bg-white border border-slate-200 rounded-2xl p-5 hover:shadow-md hover:-translate-y-0.5 transition">
                         <div class="flex items-center gap-3 mb-3">
                             @if (!string.IsNullOrEmpty(skill.IconUrl)) {
-                                <img src="@skill.IconUrl" alt="@skill.Name"
-                                     class="w-8 h-8" loading="lazy" />
+                                <img src="@skill.IconUrl" alt="@skill.Name" class="w-8 h-8 object-contain" loading="lazy" />
                             }
-                            <div class="font-semibold">@skill.Name</div>
+                            <div class="font-semibold text-slate-900">@skill.Name</div>
                         </div>
 
                         <div class="flex items-center gap-1" aria-label="Уровень @skill.Level из 5">
                             @for (int i = 1; i <= 5; i++) {
-                                <span class="text-lg @(i <= skill.Level ? "text-amber-500" : "text-gray-200")">★</span>
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     class="w-5 h-5 @(i <= skill.Level ? "text-amber-400" : "text-slate-200")"
+                                     viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
                             }
                         </div>
 
                         @if (skill.YearsOfExperience > 0) {
-                            <div class="text-xs text-gray-400 mt-2">
+                            <div class="text-xs text-slate-400 mt-2">
                                 ~@skill.YearsOfExperience @(skill.YearsOfExperience == 1 ? "год" : "года")
                             </div>
                         }

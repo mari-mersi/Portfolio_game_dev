@@ -1,5 +1,5 @@
-﻿
-using Portfolio_game_dev.Models;
+﻿using Portfolio_game_dev.Models;
+
 namespace Portfolio_game_dev.ViewModels;
 
 public class SkillsIndexViewModel {
