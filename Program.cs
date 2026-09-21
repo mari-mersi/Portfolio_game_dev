@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Portfolio_game_dev.Data;
-using Portfolio_game_dev.Services;
 using Portfolio_game_dev.Services.Abstractions;
 using Portfolio_game_dev.Services.Implementations;
 using System.Globalization;
+using QuestPDF.Infrastructure;
+using QuestPDF.Drawing;
 
 // до builder.Build():
 var ruCulture = new CultureInfo("ru-RU");
@@ -54,6 +55,29 @@ builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<ISkillService, SkillService>();
 builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
+
+// ── QuestPDF: регистрация встроенного шрифта ─────────────────────────
+// Без регистрации QuestPDF не сможет найти "Inter" в момент генерации PDF.
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
+//QuestPDF.Settings.UseEnvironmentFonts = false;
+
+var fontsPath = Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "fonts");
+// стало — рекурсивная регистрация
+if (Directory.Exists(fontsPath)) {
+    var fontFiles = Directory.GetFiles(fontsPath, "*.*", SearchOption.AllDirectories)
+        .Where(f => f.EndsWith(".ttf", StringComparison.OrdinalIgnoreCase)
+                 || f.EndsWith(".otf", StringComparison.OrdinalIgnoreCase));
+
+    foreach (var fontFile in fontFiles) {
+        QuestPDF.Drawing.FontManager.RegisterFontFromFile(fontFile);
+    }
+    // Временная отладка — увидеть, что реально зарегистрировано
+#if DEBUG
+    var registered = QuestPDF.Drawing.FontManager.GetRegisteredFonts();
+    Console.WriteLine($"[QuestPDF] Registered fonts: {string.Join(", ", registered)}");
+#endif
+}
 
 var app = builder.Build();
 
