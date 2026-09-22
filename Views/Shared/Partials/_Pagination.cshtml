@@ -1,14 +1,10 @@
 ﻿@using Portfolio_game_dev.ViewModels.Shared
 @model dynamic
 
-@*
-    Партиал пагинации.
-    Ожидает любой PagedResult<T> (читает только счётчики Page/TotalPages/HasPrevious/HasNext).
-    Дополнительно: ViewData["PaginationTag"] — текущий фильтр (string?).
-*@
-
 @{
     var currentTag = ViewData["PaginationTag"] as string;
+    var paginationController = ViewData["PaginationController"] as string ?? "Projects";
+    var paginationAction = ViewData["PaginationAction"] as string ?? "Index";
 
     int current = (int)Model.Page;
     int total = (int)Model.TotalPages;
@@ -21,7 +17,7 @@
 
         @* ─── Назад ─────────────────────────────────────────── *@
         @if ((bool)Model.HasPrevious) {
-            <a asp-controller="Projects" asp-action="Index"
+            <a asp-controller="@paginationController" asp-action="@paginationAction"
                asp-route-tag="@currentTag" asp-route-page="@(current - 1)"
                class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:text-brand-600 transition"
                aria-label="Предыдущая страница">
@@ -40,7 +36,7 @@
 
         @* ─── Первая + многоточие ───────────────────────────── *@
         @if (windowStart > 1) {
-            <a asp-controller="Projects" asp-action="Index"
+            <a asp-controller="@paginationController" asp-action="@paginationAction"
                asp-route-tag="@currentTag" asp-route-page="1"
                class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:border-brand-300 hover:text-brand-600 transition">1</a>
             if (windowStart > 2) {
@@ -55,7 +51,7 @@
                 <span class="inline-flex items-center justify-center w-9 h-9 rounded-md bg-brand-600 text-white text-sm font-semibold">@pageNumber</span>
             }
             else {
-                <a asp-controller="Projects" asp-action="Index"
+                <a asp-controller="@paginationController" asp-action="@paginationAction"
                    asp-route-tag="@currentTag" asp-route-page="@pageNumber"
                    class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:border-brand-300 hover:text-brand-600 transition">@pageNumber</a>
             }
@@ -66,14 +62,14 @@
             if (windowEnd < total - 1) {
                 <span class="px-2 text-slate-400">…</span>
             }
-            <a asp-controller="Projects" asp-action="Index"
+            <a asp-controller="@paginationController" asp-action="@paginationAction"
                asp-route-tag="@currentTag" asp-route-page="@total"
                class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:border-brand-300 hover:text-brand-600 transition">@total</a>
         }
 
         @* ─── Вперёд ────────────────────────────────────────── *@
         @if ((bool)Model.HasNext) {
-            <a asp-controller="Projects" asp-action="Index"
+            <a asp-controller="@paginationController" asp-action="@paginationAction"
                asp-route-tag="@currentTag" asp-route-page="@(current + 1)"
                class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:text-brand-600 transition"
                aria-label="Следующая страница">

@@ -1,66 +1,39 @@
-﻿@model List<Portfolio_game_dev.Models.BlogPost>
+﻿@model Portfolio_game_dev.ViewModels.BlogIndexViewModel
+
 @{
     ViewData["Title"] = "Блог";
-    int currentPage = (int)(ViewData["CurrentPage"] ?? 1);
-    int totalPages = (int)(ViewData["TotalPages"] ?? 1);
+    ViewData["Description"] = "Заметки о геймдизайне, разработке и технических экспериментах.";
 }
 
-<h1 class="mb-4">Блог</h1>
-<p class="text-muted mb-5">Заметки о геймдизайне, левел-дизайне и прототипировании.</p>
+<section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
 
-@if (!Model.Any()) {
-    <div class="alert alert-info">Пока статей нет — скоро появятся.</div>
-}
-else {
-    <div class="row g-4">
-        @foreach (var post in Model) {
-            <div class="col-md-6 col-lg-4">
-                <article class="card h-100 shadow-sm">
-                    @if (!string.IsNullOrWhiteSpace(post.CoverImageUrl)) {
-                        <img src="@post.CoverImageUrl" class="card-img-top" alt="@post.Title" />
-                    }
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">
-                            <a asp-action="Post" asp-route-slug="@post.Slug"
-                               class="text-decoration-none text-dark stretched-link">@post.Title</a>
-                        </h5>
+    @* Заголовок *@
+    <header class="mb-12" data-aos="fade-up">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-3">Блог</h1>
+        <p class="text-lg text-slate-600">
+            Заметки о геймдизайне, разработке и технических экспериментах.
+            Всего статей: <strong>@Model.TotalCount</strong>.
+        </p>
+    </header>
 
-                        <div class="text-muted small mb-2">
-                            @post.PublishedAt?.ToString("dd MMM yyyy") · @post.ReadTimeMinutes мин чтения
-                        </div>
-
-                        <p class="card-text">@post.Summary</p>
-
-                        @if (post.Tags.Any()) {
-                            <div class="mt-auto pt-3">
-                                @foreach (var tag in post.Tags) {
-                                    <span class="badge bg-light text-dark border me-1">#@tag</span>
-                                }
-                            </div>
-                        }
-                    </div>
-                </article>
-            </div>
-        }
-    </div>
-
-    @if (totalPages > 1) {
-        <nav class="mt-5" aria-label="Пагинация блога">
-            <ul class="pagination justify-content-center">
-                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage - 1)">←</a>
-                </li>
-
-                @for (int i = 1; i <= totalPages; i++) {
-                    <li class="page-item @(i == currentPage ? "active" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
-                    </li>
-                }
-
-                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                    <a class="page-link" asp-action="Index" asp-route-page="@(currentPage + 1)">→</a>
-                </li>
-            </ul>
-        </nav>
+    @* Список *@
+    @if (!Model.Posts.Any()) {
+        <div class="text-center py-20 bg-white rounded-2xl border border-dashed border-slate-200">
+            <p class="text-slate-500 text-lg">Пока статей нет — скоро появятся.</p>
+        </div>
     }
-}
+    else {
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @foreach (var post in Model.Posts) {
+                <partial name="_BlogCard" model="post" />
+            }
+        </div>
+
+        @* Пагинация *@
+        @if (Model.TotalPages > 1) {
+            ViewData["PaginationController"] = "Blog";
+            ViewData["PaginationAction"] = "Index";
+            <partial name="_Pagination" model="Model.Paged" />
+        }
+    }
+</section>
