@@ -70,6 +70,8 @@ builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<IExperienceService, ExperienceService>();
 builder.Services.AddScoped<IContactService, ContactService>();
 builder.Services.AddScoped<IReCaptchaService, ReCaptchaService>();
+builder.Services.AddScoped<IImageService, ImageService>();
+builder.Services.AddScoped<ISlugService, SlugService>();
 
 // ── QuestPDF: license + регистрация шрифтов ──────────────────────────
 QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;

@@ -1,0 +1,159 @@
+﻿@model Portfolio_game_dev.Areas.Admin.ViewModels.ProjectEditViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-red-600 text-sm mb-2"></div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+        <label asp-for="Title" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="Title" class="w-full border rounded-lg px-3 py-2" />
+        <span asp-validation-for="Title" class="text-red-600 text-xs"></span>
+    </div>
+    <div>
+        <label asp-for="Slug" class="block text-sm font-medium mb-1">
+            Slug (URL) <span class="text-slate-400 text-xs font-normal">— опционально</span>
+        </label>
+        <input asp-for="Slug" class="w-full border rounded-lg px-3 py-2 font-mono text-sm"
+               placeholder="оставьте пустым — сгенерируется автоматически" />
+        <span asp-validation-for="Slug" class="text-red-600 text-xs"></span>
+    </div>
+</div>
+
+<div>
+    <label asp-for="ShortDescription" class="block text-sm font-medium mb-1"></label>
+    <input asp-for="ShortDescription" class="w-full border rounded-lg px-3 py-2" />
+    <span asp-validation-for="ShortDescription" class="text-red-600 text-xs"></span>
+</div>
+
+<div>
+    <label asp-for="FullDescription" class="block text-sm font-medium mb-1"></label>
+    <textarea asp-for="FullDescription" rows="8"
+              class="w-full border rounded-lg px-3 py-2 font-mono text-sm"
+              placeholder="## О проекте&#10;...markdown..."></textarea>
+    <span asp-validation-for="FullDescription" class="text-red-600 text-xs"></span>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+        <label asp-for="Genre" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="Genre" class="w-full border rounded-lg px-3 py-2" />
+    </div>
+    <div>
+        <label asp-for="Role" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="Role" class="w-full border rounded-lg px-3 py-2" />
+    </div>
+    <div>
+        <label asp-for="ReleaseDate" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="ReleaseDate" type="date" class="w-full border rounded-lg px-3 py-2" />
+    </div>
+</div>
+
+<div>
+    <label asp-for="TechStack" class="block text-sm font-medium mb-1"></label>
+    <input asp-for="TechStack" class="w-full border rounded-lg px-3 py-2"
+           placeholder="Unity, C#, Shader Graph" />
+</div>
+
+<div>
+    <label class="block text-sm font-medium mb-2">Теги</label>
+    <div class="flex flex-wrap gap-3">
+        @foreach (var tag in Model.AvailableTags) {
+            <label class="flex items-center gap-2 text-sm">
+                <input type="checkbox" name="SelectedTagIds" value="@tag.Id"
+                       @(tag.Selected ? "checked" : "") class="rounded" />
+                <span>@tag.Name</span>
+            </label>
+        }
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+        <label asp-for="SteamUrl" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="SteamUrl" class="w-full border rounded-lg px-3 py-2" />
+    </div>
+    <div>
+        <label asp-for="ItchIoUrl" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="ItchIoUrl" class="w-full border rounded-lg px-3 py-2" />
+    </div>
+    <div>
+        <label asp-for="GitHubUrl" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="GitHubUrl" class="w-full border rounded-lg px-3 py-2" />
+    </div>
+    <div>
+        <label asp-for="DemoUrl" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="DemoUrl" class="w-full border rounded-lg px-3 py-2" />
+    </div>
+</div>
+
+<div>
+    <label asp-for="CoverImage" class="block text-sm font-medium mb-1"></label>
+    <input asp-for="CoverImage" type="file" accept="image/*"
+           class="w-full border rounded-lg px-3 py-2 text-sm" />
+
+    @if (!string.IsNullOrEmpty(Model.ExistingCoverImageUrl)) {
+        <div class="mt-2 flex items-center gap-3">
+            <img src="@Model.ExistingCoverImageUrl" alt="Обложка"
+                 class="w-24 h-24 object-cover rounded-lg border" />
+            <span class="text-xs text-slate-400">
+                Текущая обложка. Загрузите новую, чтобы заменить.
+            </span>
+        </div>
+    }
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+        <label asp-for="SortOrder" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="SortOrder" type="number" class="w-full border rounded-lg px-3 py-2" />
+    </div>
+    <div class="flex items-center gap-2 mt-6">
+        <input asp-for="IsPublished" type="checkbox" class="rounded" />
+        <label asp-for="IsPublished" class="text-sm"></label>
+    </div>
+    <div class="flex items-center gap-2 mt-6">
+        <input asp-for="IsFeatured" type="checkbox" class="rounded" />
+        <label asp-for="IsFeatured" class="text-sm"></label>
+    </div>
+</div>
+
+@* Автогенерация slug из Title *@
+<script>
+    (function () {
+        const titleInput = document.getElementById('Title');
+        const slugInput = document.getElementById('Slug');
+        if (!titleInput || !slugInput) return;
+
+        // Транслитерация русских букв
+        const translit = {
+            'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i',
+            'й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t',
+            'у':'u','ф':'f','х':'h','ц':'ts','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'',
+            'э':'e','ю':'yu','я':'ya'
+        };
+
+        function slugify(str) {
+            return (str || '')
+                .toLowerCase()
+                .split('')
+                .map(ch => translit[ch] !== undefined ? translit[ch] : ch)
+                .join('')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        // Флаг «пользователь редактировал slug вручную»
+        let slugTouched = slugInput.value.trim().length > 0;
+
+        // При вводе в slug — ставим флаг
+        slugInput.addEventListener('input', () => {
+            slugTouched = slugInput.value.trim().length > 0;
+        });
+
+        // При вводе в title — авто-генерируем slug, если пользователь его не трогал
+        titleInput.addEventListener('input', () => {
+            if (slugTouched) return;
+            slugInput.value = slugify(titleInput.value);
+        });
+    })();
+</script>

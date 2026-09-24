@@ -1,35 +1,85 @@
-﻿@{
+﻿@model Portfolio_game_dev.Areas.Admin.ViewModels.DashboardViewModel
+
+@{
     ViewData["Title"] = "Дашборд";
 }
 
-<div class="max-w-5xl">
-    <h1 class="text-2xl font-bold text-slate-900 mb-2">
-        Привет, админ!
-    </h1>
-    <p class="text-slate-500 mb-8">
-        Это стартовая страница админки. Скоро здесь появится статистика.
-    </p>
+<div class="max-w-6xl">
+    <header class="mb-8">
+        <h1 class="text-2xl font-bold text-slate-900 mb-1">Дашборд</h1>
+        <p class="text-sm text-slate-500">Обзор контента портфолио.</p>
+    </header>
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="bg-white rounded-2xl border border-slate-200 p-5">
-            <div class="text-xs uppercase tracking-wider text-slate-400 mb-1">Проекты</div>
-            <div class="text-3xl font-bold text-slate-900">—</div>
-        </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-5">
-            <div class="text-xs uppercase tracking-wider text-slate-400 mb-1">Навыки</div>
-            <div class="text-3xl font-bold text-slate-900">—</div>
-        </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-5">
-            <div class="text-xs uppercase tracking-wider text-slate-400 mb-1">Статьи</div>
-            <div class="text-3xl font-bold text-slate-900">—</div>
-        </div>
-        <div class="bg-white rounded-2xl border border-slate-200 p-5">
-            <div class="text-xs uppercase tracking-wider text-slate-400 mb-1">Сообщения</div>
-            <div class="text-3xl font-bold text-slate-900">—</div>
-        </div>
+    @* ── Счётчики ──────────────────────────────────────────── *@
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+
+        <a asp-area="Admin" asp-controller="Projects" asp-action="Index"
+           class="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-md hover:-translate-y-0.5 transition">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs uppercase tracking-wider text-slate-400">Проекты</span>
+                <span class="text-xl">🎮</span>
+            </div>
+            <div class="text-3xl font-bold text-slate-900">@Model.ProjectsCount</div>
+            <div class="text-xs text-slate-500 mt-1">
+                из них опубликовано: <strong>@Model.PublishedProjectsCount</strong>
+            </div>
+        </a>
+
+        <a asp-area="Admin" asp-controller="Skills" asp-action="Index"
+           class="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-md hover:-translate-y-0.5 transition">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs uppercase tracking-wider text-slate-400">Навыки</span>
+                <span class="text-xl">⚡</span>
+            </div>
+            <div class="text-3xl font-bold text-slate-900">@Model.SkillsCount</div>
+        </a>
+
+        <a asp-area="Admin" asp-controller="Blog" asp-action="Index"
+           class="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-md hover:-translate-y-0.5 transition">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs uppercase tracking-wider text-slate-400">Статьи</span>
+                <span class="text-xl">📝</span>
+            </div>
+            <div class="text-3xl font-bold text-slate-900">@Model.PostsCount</div>
+            <div class="text-xs text-slate-500 mt-1">
+                из них опубликовано: <strong>@Model.PublishedPostsCount</strong>
+            </div>
+        </a>
+
+        <a asp-area="Admin" asp-controller="ContactMessages" asp-action="Index"
+           class="bg-white rounded-2xl border @(Model.UnreadMessagesCount > 0 ? "border-brand-300" : "border-slate-200") p-5 hover:shadow-md hover:-translate-y-0.5 transition">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs uppercase tracking-wider text-slate-400">Сообщения</span>
+                <span class="text-xl">✉️</span>
+            </div>
+            <div class="text-3xl font-bold text-slate-900">@Model.TotalMessagesCount</div>
+            @if (Model.UnreadMessagesCount > 0) {
+                <div class="text-xs text-brand-600 mt-1 font-medium">
+                    непрочитанных: <strong>@Model.UnreadMessagesCount</strong>
+                </div>
+            }
+            else {
+                <div class="text-xs text-slate-400 mt-1">все прочитаны</div>
+            }
+        </a>
     </div>
 
-    <p class="text-sm text-slate-400 mt-8">
-        Статистика появится в Дне 9 (Admin Dashboard + CRUD).
-    </p>
+    @* ── Быстрые действия ──────────────────────────────────── *@
+    <section>
+        <h2 class="text-lg font-bold text-slate-900 mb-4">Быстрые действия</h2>
+        <div class="flex flex-wrap gap-3">
+            <a asp-area="Admin" asp-controller="Projects" asp-action="Create"
+               class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition">
+                + Новый проект
+            </a>
+            <a asp-area="Admin" asp-controller="Skills" asp-action="Create"
+               class="inline-flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white font-medium px-5 py-2.5 rounded-lg text-sm transition">
+                + Новый навык
+            </a>
+            <a asp-area="" asp-controller="Home" asp-action="Index"
+               class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:border-brand-300 text-slate-700 font-medium px-5 py-2.5 rounded-lg text-sm transition">
+                Открыть сайт ↗
+            </a>
+        </div>
+    </section>
 </div>
