@@ -1,0 +1,138 @@
+﻿@model Portfolio_game_dev.Areas.Admin.ViewModels.ExperiencesListViewModel
+@{
+    ViewData["Title"] = "Опыт работы";
+}
+
+<div class="max-w-6xl">
+    <div class="flex items-center justify-between mb-6">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900">Опыт работы</h1>
+            <p class="text-sm text-slate-500 mt-1">
+                Всего: <b>@Model.TotalCount</b> ·
+                Текущих: <b>@Model.CurrentCount</b>
+            </p>
+        </div>
+        <a asp-action="Create"
+           class="px-4 py-2 rounded-lg bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition">
+            + Добавить опыт
+        </a>
+    </div>
+
+    @if (TempData["Success"] is string ok) {
+        <div class="mb-4 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 px-4 py-2 text-sm">
+            @ok
+        </div>
+    }
+
+    <form method="get" class="flex flex-wrap gap-2 mb-4">
+        <input type="text" name="search" value="@Model.SearchTerm"
+               placeholder="Поиск по компании или должности..."
+               class="border rounded-lg px-3 py-2 text-sm w-64" />
+
+        <select name="company" class="border rounded-lg px-3 py-2 text-sm">
+            <option value="">Все компании</option>
+            @foreach (var c in Model.AvailableCompanies) {
+                <option value="@c" selected="@(c == Model.CompanyFilter)">@c</option>
+            }
+        </select>
+
+        <button class="px-4 py-2 rounded-lg bg-slate-800 text-white text-sm">Фильтр</button>
+        <a asp-action="Index" class="px-4 py-2 rounded-lg border text-sm">Сброс</a>
+    </form>
+
+    @* ── Таблица (md+) ──────────────────────────────────────── *@
+    <div class="hidden md:block overflow-x-auto rounded-xl border bg-white">
+        <table class="w-full text-sm min-w-[720px]">
+            <thead class="bg-slate-50 text-left text-slate-500">
+                <tr>
+                    <th class="px-4 py-2">Компания</th>
+                    <th class="px-4 py-2">Должность</th>
+                    <th class="px-4 py-2">Период</th>
+                    <th class="px-4 py-2">Стек</th>
+                    <th class="px-4 py-2 text-right">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Experiences.Any()) {
+                    <tr>
+                        <td colspan="5" class="px-4 py-8 text-center text-slate-400">
+                            Записи не найдены
+                        </td>
+                    </tr>
+                }
+                @foreach (var e in Model.Experiences) {
+                    <tr class="border-t hover:bg-slate-50">
+                        <td class="px-4 py-2">
+                            <div class="font-medium text-slate-900">@e.Company</div>
+                            @if (!string.IsNullOrEmpty(e.Location)) {
+                                <div class="text-xs text-slate-400">@e.Location</div>
+                            }
+                        </td>
+                        <td class="px-4 py-2">
+                            <div class="text-slate-700">@e.Position</div>
+                            @if (e.IsCurrent) {
+                                <span class="inline-block text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full mt-1">
+                                    сейчас
+                                </span>
+                            }
+                        </td>
+                        <td class="px-4 py-2 text-slate-500 text-xs">@e.Period</td>
+                        <td class="px-4 py-2">
+                            <div class="flex flex-wrap gap-1">
+                                @foreach (var t in e.TechList.Take(3)) {
+                                    <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
+                                        @t
+                                    </span>
+                                }
+                            </div>
+                        </td>
+                        <td class="px-4 py-2 text-right whitespace-nowrap">
+                            <a asp-action="Edit" asp-route-id="@e.Id"
+                               class="text-brand-600 hover:underline mr-3">Изменить</a>
+                            <a asp-action="Delete" asp-route-id="@e.Id"
+                               class="text-red-600 hover:underline">Удалить</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    @* ── Карточки (мобилка) ────────────────────────────────── *@
+    <div class="md:hidden space-y-4">
+        @foreach (var e in Model.Experiences) {
+            <div class="bg-white rounded-2xl border border-slate-200 p-4">
+                <div class="mb-2">
+                    <div class="font-bold text-slate-900">@e.Position</div>
+                    <div class="text-sm text-slate-600">@e.Company</div>
+                    @if (e.IsCurrent) {
+                        <span class="inline-block text-[10px] bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded-full mt-1">
+                            сейчас
+                        </span>
+                    }
+                </div>
+
+                <div class="text-xs text-slate-500 mb-2">@e.Period</div>
+
+                @if (e.TechList.Any()) {
+                    <div class="flex flex-wrap gap-1 mb-3">
+                        @foreach (var t in e.TechList.Take(4)) {
+                            <span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">@t</span>
+                        }
+                    </div>
+                }
+
+                <div class="flex gap-3 pt-3 border-t border-slate-100">
+                    <a asp-action="Edit" asp-route-id="@e.Id"
+                       class="flex-1 text-center text-sm font-medium text-brand-600 hover:text-brand-700 py-2 rounded-lg hover:bg-brand-50 transition">
+                        Изменить
+                    </a>
+                    <a asp-action="Delete" asp-route-id="@e.Id"
+                       class="flex-1 text-center text-sm font-medium text-red-600 hover:text-red-700 py-2 rounded-lg hover:bg-red-50 transition">
+                        Удалить
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+</div>

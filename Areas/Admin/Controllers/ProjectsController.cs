@@ -34,8 +34,10 @@ public class ProjectsController : Controller {
         var query = _db.Projects.AsNoTracking().AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(search)) {
-            var s = search.Trim();
-            query = query.Where(p => p.Title.Contains(s) || p.Slug.Contains(s));
+            var s = search.Trim().ToLowerInvariant();
+            query = query.Where(p =>
+                p.Title.ToLower().Contains(s) ||
+                p.Slug.ToLower().Contains(s));
         }
 
         var projects = await query

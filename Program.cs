@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Portfolio_game_dev.Data;
 using Portfolio_game_dev.Services.Abstractions;
 using Portfolio_game_dev.Services.Implementations;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 // ── Культура ru-RU ───────────────────────────────────────────────────
 var ruCulture = new CultureInfo("ru-RU");
@@ -61,6 +63,10 @@ builder.Services.AddRateLimiter(options => {
 
     options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 });
+
+// FluentValidation: валидаторы и авто-интеграция с ASP.NET Core
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+builder.Services.AddFluentValidationAutoValidation();
 
 // ── Наши сервисы ─────────────────────────────────────────────────────
 builder.Services.AddScoped<IPdfResumeService, PdfResumeService>();

@@ -1,0 +1,73 @@
+﻿@model Portfolio_game_dev.Areas.Admin.ViewModels.ExperienceEditViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-red-600 text-sm mb-2"></div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+        <label asp-for="Company" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="Company" class="w-full border rounded-lg px-3 py-2" />
+        <span asp-validation-for="Company" class="text-red-600 text-xs"></span>
+    </div>
+    <div>
+        <label asp-for="Position" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="Position" class="w-full border rounded-lg px-3 py-2" />
+        <span asp-validation-for="Position" class="text-red-600 text-xs"></span>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+        <label asp-for="EmploymentType" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="EmploymentType" class="w-full border rounded-lg px-3 py-2"
+               placeholder="Full-time" />
+    </div>
+    <div>
+        <label asp-for="Location" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="Location" class="w-full border rounded-lg px-3 py-2"
+               placeholder="Москва / Remote" />
+    </div>
+    <div>
+        <label asp-for="SortOrder" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="SortOrder" type="number" class="w-full border rounded-lg px-3 py-2" />
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+        <label asp-for="StartDate" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="StartDate" type="date" class="w-full border rounded-lg px-3 py-2" />
+        <span asp-validation-for="StartDate" class="text-red-600 text-xs"></span>
+    </div>
+    <div>
+        <label asp-for="EndDate" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="EndDate" type="date" class="w-full border rounded-lg px-3 py-2" />
+        <span asp-validation-for="EndDate" class="text-red-600 text-xs"></span>
+    </div>
+    <div class="flex items-center gap-2 mt-6">
+        <input asp-for="IsCurrent" type="checkbox" class="rounded" />
+        <label asp-for="IsCurrent" class="text-sm"></label>
+    </div>
+</div>
+
+<div>
+    <label asp-for="Description" class="block text-sm font-medium mb-1"></label>
+    <textarea asp-for="Description" rows="3"
+              class="w-full border rounded-lg px-3 py-2"
+              placeholder="Краткое описание обязанностей..."></textarea>
+</div>
+
+<div>
+    <label asp-for="HighlightsText" class="block text-sm font-medium mb-1"></label>
+    <textarea asp-for="HighlightsText" rows="5"
+              class="w-full border rounded-lg px-3 py-2 font-mono text-sm"
+              placeholder="Оптимизировал X на 30%&#10;Сделал Y&#10;Разработал Z"></textarea>
+    <p class="text-xs text-slate-400 mt-1">
+        По одному достижению на строку
+    </p>
+</div>
+
+<div>
+    <label asp-for="TechStack" class="block text-sm font-medium mb-1"></label>
+    <input asp-for="TechStack" class="w-full border rounded-lg px-3 py-2"
+           placeholder="Unity, C#, Zenject" />
+</div>

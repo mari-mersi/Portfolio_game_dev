@@ -41,9 +41,10 @@
     <a asp-action="Index" class="px-4 py-2 rounded-lg border text-sm">Сброс</a>
 </form>
 
-<div class="overflow-hidden rounded-xl border bg-white">
-    <table class="w-full text-sm">
-        <thead class="bg-gray-50 text-left text-gray-500">
+@* ── Таблица (md+) ──────────────────────────────────────── *@
+<div class="hidden md:block overflow-x-auto rounded-xl border bg-white">
+    <table class="w-full text-sm min-w-[720px]">
+        <thead class="bg-slate-50 text-left text-slate-500">
             <tr>
                 <th class="px-4 py-2">Название</th>
                 <th class="px-4 py-2">Категория</th>
@@ -56,45 +57,43 @@
         <tbody>
             @if (!Model.Skills.Any()) {
                 <tr>
-                    <td colspan="6" class="px-4 py-8 text-center text-gray-400">
+                    <td colspan="6" class="px-4 py-8 text-center text-slate-400">
                         Навыки не найдены
                     </td>
                 </tr>
             }
             @foreach (var s in Model.Skills) {
-                <tr class="border-t hover:bg-gray-50">
+                <tr class="border-t hover:bg-slate-50">
                     <td class="px-4 py-2 flex items-center gap-2">
                         @if (!string.IsNullOrEmpty(s.IconUrl)) {
                             <img src="@s.IconUrl" alt="" class="w-5 h-5" />
                         }
-                        <span class="font-medium">@s.Name</span>
+                        <span class="font-medium text-slate-900">@s.Name</span>
                     </td>
-                    <td class="px-4 py-2 text-gray-600">@s.Category</td>
+                    <td class="px-4 py-2 text-slate-600">@s.Category</td>
                     <td class="px-4 py-2">
                         <span class="text-amber-500">
                             @for (int i = 1; i <= s.Level; i++) {
                                 <text>★</text>
                             }
                         </span>
-                        <span class="text-gray-300">
+                        <span class="text-slate-200">
                             @for (int i = s.Level + 1; i <= 5; i++) {
                                 <text>★</text>
                             }
                         </span>
                     </td>
-                    <td class="px-4 py-2 text-gray-500">
+                    <td class="px-4 py-2 text-slate-500">
                         @(s.YearsOfExperience > 0 ? $"{s.YearsOfExperience} г." : "—")
                     </td>
                     <td class="px-4 py-2">
                         @if (s.IsFeatured) {
-                            <span class="text-xs bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full">
-                                да
-                            </span>
+                            <span class="text-xs bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full">да</span>
                         }
                     </td>
                     <td class="px-4 py-2 text-right whitespace-nowrap">
                         <a asp-action="Edit" asp-route-id="@s.Id"
-                           class="text-indigo-600 hover:underline mr-3">Изменить</a>
+                           class="text-brand-600 hover:underline mr-3">Изменить</a>
                         <a asp-action="Delete" asp-route-id="@s.Id"
                            class="text-red-600 hover:underline">Удалить</a>
                     </td>
@@ -102,4 +101,51 @@
             }
         </tbody>
     </table>
+</div>
+
+@* ── Карточки (мобилка) ────────────────────────────────── *@
+<div class="md:hidden space-y-4">
+    @foreach (var s in Model.Skills) {
+        <div class="bg-white rounded-2xl border border-slate-200 p-4">
+            <div class="flex items-center gap-3 mb-3">
+                @if (!string.IsNullOrEmpty(s.IconUrl)) {
+                    <img src="@s.IconUrl" alt="" class="w-8 h-8 flex-shrink-0" />
+                }
+                <div class="min-w-0">
+                    <div class="font-bold text-slate-900 truncate">@s.Name</div>
+                    <div class="text-xs text-slate-500">@s.Category</div>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3 mb-3 text-sm">
+                <span class="text-amber-500">
+                    @for (int i = 1; i <= s.Level; i++) {
+                        <text>★</text>
+                    }
+                </span>
+                <span class="text-slate-200">
+                    @for (int i = s.Level + 1; i <= 5; i++) {
+                        <text>★</text>
+                    }
+                </span>
+                @if (s.YearsOfExperience > 0) {
+                    <span class="text-xs text-slate-500">~@s.YearsOfExperience г.</span>
+                }
+                @if (s.IsFeatured) {
+                    <span class="text-[10px] bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full">featured</span>
+                }
+            </div>
+
+            <div class="flex gap-3 pt-3 border-t border-slate-100">
+                <a asp-action="Edit" asp-route-id="@s.Id"
+                   class="flex-1 text-center text-sm font-medium text-brand-600 hover:text-brand-700 py-2 rounded-lg hover:bg-brand-50 transition">
+                    Изменить
+                </a>
+                <a asp-action="Delete" asp-route-id="@s.Id"
+                   class="flex-1 text-center text-sm font-medium text-red-600 hover:text-red-700 py-2 rounded-lg hover:bg-red-50 transition">
+                    Удалить
+                </a>
+            </div>
+        </div>
+    }
 </div>

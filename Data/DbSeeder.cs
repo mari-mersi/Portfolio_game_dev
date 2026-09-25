@@ -132,16 +132,16 @@ public static class DbSeeder {
 
             // Навыки. IsFeatured=true попадают на главную в блок «Топ навыков».
             db.Skills.AddRange(
-                new Skill { Name = "C#", Category = "Programming", Level = 5, YearsOfExperience = 4, IsFeatured = true },
-                new Skill { Name = "Unity", Category = "Tools", Level = 5, YearsOfExperience = 4, IsFeatured = true },
-                new Skill { Name = "Unreal Engine", Category = "Tools", Level = 3, YearsOfExperience = 1 },
-                new Skill { Name = "Godot", Category = "Tools", Level = 4, YearsOfExperience = 2 },
-                new Skill { Name = "Shader Graph", Category = "Graphics", Level = 3, YearsOfExperience = 2, IsFeatured = true },
-                new Skill { Name = "Git / Git LFS", Category = "Tools", Level = 4, YearsOfExperience = 4 },
-                new Skill { Name = "Zenject / DI", Category = "Programming", Level = 4, YearsOfExperience = 3 },
-                new Skill { Name = "UniTask", Category = "Programming", Level = 3, YearsOfExperience = 2 },
-                new Skill { Name = "Blender", Category = "Graphics", Level = 2, YearsOfExperience = 1 },
-                new Skill { Name = "Game Design", Category = "Design", Level = 4, YearsOfExperience = 5, IsFeatured = true });
+                new Skill { Name = "C#", Category = "Программирование", Level = 5, YearsOfExperience = 4, IsFeatured = true },
+                new Skill { Name = "Unity", Category = "Инструменты", Level = 5, YearsOfExperience = 4, IsFeatured = true },
+                new Skill { Name = "Unreal Engine", Category = "Инструменты", Level = 3, YearsOfExperience = 1 },
+                new Skill { Name = "Godot", Category = "Инструменты", Level = 4, YearsOfExperience = 2 },
+                new Skill { Name = "Shader Graph", Category = "Графика", Level = 3, YearsOfExperience = 2, IsFeatured = true },
+                new Skill { Name = "Git / Git LFS", Category = "Инструменты", Level = 4, YearsOfExperience = 4 },
+                new Skill { Name = "Zenject / DI", Category = "Программирование", Level = 4, YearsOfExperience = 3 },
+                new Skill { Name = "UniTask", Category = "Программирование", Level = 3, YearsOfExperience = 2 },
+                new Skill { Name = "Blender", Category = "Графика", Level = 2, YearsOfExperience = 1 },
+                new Skill { Name = "Game Design", Category = "Дизайн", Level = 4, YearsOfExperience = 5, IsFeatured = true });
 
             // Опыт. Текущая работа — IsCurrent=true, EndDate=null.
             db.Experiences.AddRange(
