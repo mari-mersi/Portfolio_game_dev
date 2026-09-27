@@ -5,10 +5,6 @@ using SixLabors.ImageSharp.Processing;
 
 namespace Portfolio_game_dev.Services.Implementations;
 
-/// <summary>
-/// Обработка изображений через ImageSharp.
-/// Сохраняет в wwwroot/uploads/projects/{slug}-{thumb|full}.webp
-/// </summary>
 public class ImageService : IImageService {
     private const int ThumbWidth = 400;
     private const int FullWidth = 1200;
@@ -20,16 +16,30 @@ public class ImageService : IImageService {
         _env = env;
     }
 
-    public async Task<string> SaveProjectCoverAsync(IFormFile file, string slug, CancellationToken ct = default) {
+    // ── Project covers ───────────────────────────────────────────────
+    public Task<string> SaveProjectCoverAsync(IFormFile file, string slug, CancellationToken ct = default)
+        => SaveCoverAsync(file, slug, "projects", ct);
+
+    public Task DeleteProjectCoverAsync(string slug, CancellationToken ct = default)
+        => DeleteCoverAsync(slug, "projects");
+
+    // ── Blog post covers ─────────────────────────────────────────────
+    public Task<string> SavePostCoverAsync(IFormFile file, string slug, CancellationToken ct = default)
+        => SaveCoverAsync(file, slug, "blog", ct);
+
+    public Task DeletePostCoverAsync(string slug, CancellationToken ct = default)
+        => DeleteCoverAsync(slug, "blog");
+
+    // ── Общая логика ─────────────────────────────────────────────────
+    private async Task<string> SaveCoverAsync(IFormFile file, string slug, string subfolder, CancellationToken ct) {
         if (file is null || file.Length == 0)
             throw new ArgumentException("Файл не передан", nameof(file));
 
-        var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "projects");
+        var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", subfolder);
         Directory.CreateDirectory(uploadsDir);
 
         var safeSlug = SanitizeSlug(slug);
 
-        // Загружаем оригинал в память
         using var stream = file.OpenReadStream();
         using var image = await Image.LoadAsync(stream, ct);
 
@@ -51,12 +61,11 @@ public class ImageService : IImageService {
             await full.SaveAsync(fullPath, new WebpEncoder { Quality = WebpQuality }, ct);
         }
 
-        // Возвращаем относительный путь для БД
-        return $"/uploads/projects/{safeSlug}-full.webp";
+        return $"/uploads/{subfolder}/{safeSlug}-full.webp";
     }
 
-    public Task DeleteProjectCoverAsync(string slug, CancellationToken ct = default) {
-        var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", "projects");
+    private Task DeleteCoverAsync(string slug, string subfolder) {
+        var uploadsDir = Path.Combine(_env.WebRootPath, "uploads", subfolder);
         var safeSlug = SanitizeSlug(slug);
 
         foreach (var suffix in new[] { "-thumb.webp", "-full.webp" }) {

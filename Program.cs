@@ -48,6 +48,12 @@ builder.Services.AddControllersWithViews()
         options.AreaViewLocationFormats.Add("/Areas/{2}/Views/Shared/Partials/{0}.cshtml");
     });
 
+builder.Services.AddOutputCache(options => {
+    options.AddPolicy("public", policy => policy
+        .Expire(TimeSpan.FromSeconds(60))
+        .Tag("public"));
+});
+
 // ── HttpClient (нужен для ReCaptchaService) ──────────────────────────
 builder.Services.AddHttpClient();
 
@@ -120,6 +126,8 @@ app.UseRateLimiter();
 
 app.UseAuthentication();   // обязательно ДО UseAuthorization
 app.UseAuthorization();
+
+app.UseOutputCache();
 
 // Маршрутизация: сначала Areas, потом default
 app.MapControllerRoute(

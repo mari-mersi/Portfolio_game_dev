@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Portfolio_game_dev.Services.Abstractions;
 using Portfolio_game_dev.ViewModels;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace Portfolio_game_dev.Controllers;
 
@@ -19,6 +20,7 @@ public class BlogController : Controller {
     /// GET: /Blog?page=2
     /// </summary>
     [HttpGet]
+    [OutputCache(PolicyName = "public")]
     public async Task<IActionResult> Index(int page = 1, CancellationToken ct = default) {
         var paged = await _blog.GetPagedAsync(page, pageSize: 6, ct);
 

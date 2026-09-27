@@ -1,0 +1,144 @@
+﻿@model Portfolio_game_dev.Areas.Admin.ViewModels.BlogPostEditViewModel
+
+<div asp-validation-summary="ModelOnly" class="text-red-600 text-sm mb-2"></div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+        <label asp-for="Title" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="Title" id="Title" class="w-full border rounded-lg px-3 py-2" />
+        <span asp-validation-for="Title" class="text-red-600 text-xs"></span>
+    </div>
+    <div>
+        <label asp-for="Slug" class="block text-sm font-medium mb-1">
+            Slug (URL) <span class="text-slate-400 text-xs font-normal">— опционально</span>
+        </label>
+        <input asp-for="Slug" id="Slug" class="w-full border rounded-lg px-3 py-2 font-mono text-sm"
+               placeholder="оставьте пустым — сгенерируется автоматически" />
+        <span asp-validation-for="Slug" class="text-red-600 text-xs"></span>
+    </div>
+</div>
+
+<div>
+    <label asp-for="Summary" class="block text-sm font-medium mb-1"></label>
+    <input asp-for="Summary" class="w-full border rounded-lg px-3 py-2" />
+    <span asp-validation-for="Summary" class="text-red-600 text-xs"></span>
+</div>
+
+<div>
+    <label asp-for="Content" class="block text-sm font-medium mb-1">
+        Полный текст (Markdown) <span class="text-slate-400 text-xs font-normal">— превью ниже</span>
+    </label>
+    <textarea asp-for="Content" id="content-input" rows="14"
+              class="w-full border rounded-lg px-3 py-2 font-mono text-sm"
+              placeholder="## Введение&#10;Текст статьи..."></textarea>
+    <span asp-validation-for="Content" class="text-red-600 text-xs"></span>
+
+    @* Markdown preview *@
+    <div class="mt-3 border rounded-lg bg-slate-50 p-4">
+        <div class="text-xs uppercase tracking-wider text-slate-400 mb-2">Превью</div>
+        <div id="content-preview" class="prose prose-slate max-w-none text-sm">
+            <p class="text-slate-400 italic">Начните печатать, чтобы увидеть превью...</p>
+        </div>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div>
+        <label asp-for="PublishedAt" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="PublishedAt" type="datetime-local"
+               value="@Model.PublishedAt?.ToString("yyyy-MM-ddTHH:mm")"
+               class="w-full border rounded-lg px-3 py-2" />
+    </div>
+    <div>
+        <label asp-for="ReadTimeMinutes" class="block text-sm font-medium mb-1"></label>
+        <input asp-for="ReadTimeMinutes" type="number" min="0" max="120"
+               class="w-full border rounded-lg px-3 py-2" />
+    </div>
+    <div class="flex items-center gap-2 mt-6">
+        <input asp-for="IsPublished" type="checkbox" class="rounded" />
+        <label asp-for="IsPublished" class="text-sm"></label>
+    </div>
+</div>
+
+<div>
+    <label class="block text-sm font-medium mb-2">Теги</label>
+    <div class="flex flex-wrap gap-3">
+        @foreach (var tag in Model.AvailableTags) {
+            <label class="flex items-center gap-2 text-sm">
+                <input type="checkbox" name="SelectedTagIds" value="@tag.Id"
+                       @(tag.Selected ? "checked" : "") class="rounded" />
+                <span>@tag.Name</span>
+            </label>
+        }
+    </div>
+</div>
+
+<div>
+    <label asp-for="CoverImage" class="block text-sm font-medium mb-1"></label>
+    <input asp-for="CoverImage" type="file" accept="image/*"
+           class="w-full border rounded-lg px-3 py-2 text-sm" />
+
+    @if (!string.IsNullOrEmpty(Model.ExistingCoverImageUrl)) {
+        <div class="mt-2 flex items-center gap-3">
+            <img src="@Model.ExistingCoverImageUrl" alt="Обложка" class="w-24 h-24 object-cover rounded-lg border" />
+            <span class="text-xs text-slate-400">Текущая обложка. Загрузите новую, чтобы заменить.</span>
+        </div>
+    }
+</div>
+
+@* Markdown-preview + автогенерация slug *@
+<script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+<script>
+    (function () {
+        // ── Автогенерация slug ──
+        const titleInput = document.getElementById('Title');
+        const slugInput = document.getElementById('Slug');
+
+        const translit = {
+            'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i',
+            'й':'y','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t',
+            'у':'u','ф':'f','х':'h','ц':'ts','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'',
+            'э':'e','ю':'yu','я':'ya'
+        };
+
+        function slugify(str) {
+            return (str || '')
+                .toLowerCase()
+                .split('')
+                .map(ch => translit[ch] !== undefined ? translit[ch] : ch)
+                .join('')
+                .replace(/[^a-z0-9]+/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^-+|-+$/g, '');
+        }
+
+        if (titleInput && slugInput) {
+            let slugTouched = slugInput.value.trim().length > 0;
+            slugInput.addEventListener('input', () => {
+                slugTouched = slugInput.value.trim().length > 0;
+            });
+            titleInput.addEventListener('input', () => {
+                if (slugTouched) return;
+                slugInput.value = slugify(titleInput.value);
+            });
+        }
+
+        // ── Markdown preview ──
+        const contentInput = document.getElementById('content-input');
+        const preview = document.getElementById('content-preview');
+
+        function updatePreview() {
+            const text = contentInput?.value?.trim();
+            if (!text) {
+                preview.innerHTML = '<p class="text-slate-400 italic">Начните печатать, чтобы увидеть превью...</p>';
+                return;
+            }
+            preview.innerHTML = marked.parse(text);
+        }
+
+        if (contentInput && preview) {
+            contentInput.addEventListener('input', updatePreview);
+            updatePreview();
+        }
+    })();
+</script>

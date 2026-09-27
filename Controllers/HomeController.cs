@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.AspNetCore.RateLimiting;
 using Portfolio_game_dev.Services.Abstractions;
 using Portfolio_game_dev.ViewModels;
@@ -28,6 +29,7 @@ public class HomeController : Controller {
         _recaptcha = recaptcha;
     }
 
+    [OutputCache(PolicyName = "public")]
     public async Task<IActionResult> Index() {
         var vm = new HomeViewModel {
             Hero = new HeroViewModel {

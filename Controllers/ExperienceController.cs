@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Portfolio_game_dev.Services.Abstractions;
 
 namespace Portfolio_game_dev.Controllers;
@@ -17,6 +18,7 @@ public class ExperienceController : Controller {
     /// GET: /experience
     /// </summary>
     [HttpGet]
+    [OutputCache(PolicyName = "public")]
     public async Task<IActionResult> Index(CancellationToken ct = default) {
         var vm = await _experience.GetTimelineAsync(ct);
 

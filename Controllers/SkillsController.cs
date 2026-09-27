@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Portfolio_game_dev.Services.Abstractions;
 using Portfolio_game_dev.ViewModels;
 
@@ -12,7 +13,7 @@ public class SkillsController : Controller {
     }
 
     [HttpGet]
-    [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any)]
+    [OutputCache(PolicyName = "public")]
     public async Task<IActionResult> Index(CancellationToken ct = default) {
         var grouped = await _skills.GetGroupedByCategoryAsync(ct);
         var featured = await _skills.GetTopAsync(8, ct);

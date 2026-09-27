@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OutputCaching;
 using Portfolio_game_dev.Services.Abstractions;
 using Portfolio_game_dev.ViewModels;
 
@@ -22,6 +23,7 @@ public class ProjectsController : Controller {
     /// Список опубликованных проектов с фильтром по тегу и пагинацией.
     /// </summary>
     [HttpGet]
+    [OutputCache(PolicyName = "public")]
     public async Task<IActionResult> Index(int page = 1, string? tag = null, CancellationToken ct = default) {
         // Если пришёл пустой tag (например, ?tag=), приводим к null
         var normalizedTag = string.IsNullOrWhiteSpace(tag) ? null : tag.Trim().ToLowerInvariant();
