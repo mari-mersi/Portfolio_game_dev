@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.OutputCaching;   // ← добавить
 using Microsoft.EntityFrameworkCore;
 using Portfolio_game_dev.Areas.Admin.ViewModels;
 using Portfolio_game_dev.Data;
@@ -15,16 +16,19 @@ public class ProjectsController : Controller {
     private readonly AppDbContext _db;
     private readonly IImageService _images;
     private readonly ISlugService _slugs;
+    private readonly IOutputCacheStore _cache;   // ← добавить
     private readonly ILogger<ProjectsController> _logger;
 
     public ProjectsController(
         AppDbContext db,
         IImageService images,
         ISlugService slugs,
+        IOutputCacheStore cache,                  // ← добавить
         ILogger<ProjectsController> logger) {
         _db = db;
         _images = images;
         _slugs = slugs;
+        _cache = cache;                           // ← добавить
         _logger = logger;
     }
 
@@ -125,6 +129,8 @@ public class ProjectsController : Controller {
 
         _db.Projects.Add(project);
         await _db.SaveChangesAsync(ct);
+
+        await _cache.EvictByTagAsync("public", ct);   // ← добавить
 
         TempData["Success"] = $"Проект «{project.Title}» создан.";
         return RedirectToAction(nameof(Index));
@@ -256,6 +262,8 @@ public class ProjectsController : Controller {
 
         await _db.SaveChangesAsync(ct);
 
+        await _cache.EvictByTagAsync("public", ct);   // ← добавить
+
         TempData["Success"] = $"Проект «{project.Title}» обновлён.";
         return RedirectToAction(nameof(Index));
     }
@@ -290,6 +298,8 @@ public class ProjectsController : Controller {
 
         _db.Projects.Remove(project);
         await _db.SaveChangesAsync(ct);
+
+        await _cache.EvictByTagAsync("public", ct);   // ← добавить
 
         TempData["Success"] = $"Проект «{project.Title}» удалён.";
         return RedirectToAction(nameof(Index));

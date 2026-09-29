@@ -1,19 +1,54 @@
-﻿<!DOCTYPE html>
+﻿@inject IWebHostEnvironment Env
+@{
+    // ── Значения по умолчанию ────────────────────────────────────
+    var pageTitle = ViewData["Title"] as string ?? "Портфолио GameDev";
+    var pageDescription = ViewData["Description"] as string
+        ?? "Портфолио геймдизайнера: проекты, навыки, статьи о разработке игр.";
+
+    // OG-картинка: из ViewData или дефолтная
+    var ogImageRaw = ViewData["OgImage"] as string ?? "/images/og-default.png";
+
+    // Абсолютный URL (OG требует именно абсолютный)
+    var scheme = Context.Request.Scheme;
+    var host = Context.Request.Host;
+    var absoluteOgImage = ogImageRaw.StartsWith("http")
+        ? ogImageRaw
+        : $"{scheme}://{host}{ogImageRaw}";
+
+    var absoluteUrl = $"{scheme}://{host}{Context.Request.Path}{Context.Request.QueryString}";
+}
+<!DOCTYPE html>
 <html lang="ru" class="scroll-smooth">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>@ViewData["Title"] — Портфолио GameDev</title>
+    <title>@pageTitle — GameDev Portfolio</title>
+    <meta name="description" content="@pageDescription" />
 
-    @if (ViewData["Description"] is string desc) {
-        <meta name="description" content="@desc" />
-    }
+    @* ─── Open Graph ────────────────────────────────────────────── *@
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="GameDev Portfolio" />
+    <meta property="og:title" content="@pageTitle" />
+    <meta property="og:description" content="@pageDescription" />
+    <meta property="og:url" content="@absoluteUrl" />
+    <meta property="og:image" content="@absoluteOgImage" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="ru_RU" />
 
-    @* ─── Tailwind CSS (CDN) ───────────────────────────────────── *@
+    @* ─── Twitter Cards ─────────────────────────────────────────── *@
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="@pageTitle" />
+    <meta name="twitter:description" content="@pageDescription" />
+    <meta name="twitter:image" content="@absoluteOgImage" />
+
+    @* ─── Canonical (защита от дублей) ──────────────────────────── *@
+    <link rel="canonical" href="@absoluteUrl" />
+
+    @* ─── Tailwind CSS (CDN) ────────────────────────────────────── *@
     <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
     <script>
-        // Кастомная тема Tailwind — цвета бренда, шрифты и т.п.
         tailwind.config = {
             theme: {
                 extend: {
@@ -35,17 +70,20 @@
         };
     </script>
 
-    @* ─── Шрифт Inter ──────────────────────────────────────────── *@
+    @* ─── Шрифт Inter ───────────────────────────────────────────── *@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
           rel="stylesheet" />
 
-    @* ─── AOS (анимации при скролле) ───────────────────────────── *@
+    @* ─── AOS (анимации при скролле) ────────────────────────────── *@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
 
-    @* ─── Свои стили ───────────────────────────────────────────── *@
+    @* ─── Свои стили ────────────────────────────────────────────── *@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @* ─── Favicon ───────────────────────────────────────────────── *@
+    <link rel="icon" type="image/x-icon" href="~/favicon.ico" />
 
     @await RenderSectionAsync("Head", required: false)
 </head>
@@ -110,7 +148,7 @@
                 <li><a asp-controller="Home" asp-action="About" class="hover:text-brand-600 transition">О себе</a></li>
                 <li><a asp-controller="Home" asp-action="Contact" class="hover:text-brand-600 transition">Контакты</a></li>
                 <li>
-                    <a asp-controller="Sitemap" asp-action="Index" class="hover:text-brand-600 transition" title="Карта сайта">Sitemap</a>
+                    <a href="/sitemap.xml" class="hover:text-brand-600 transition" title="Карта сайта">Sitemap</a>
                 </li>
             </ul>
         </div>
@@ -119,8 +157,6 @@
     @* ═══ SCRIPTS ════════════════════════════════════════════════ *@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // Инициализация AOS (анимации появления при скролле).
-        // Отключаем на мобильных, чтобы не мешало — можно убрать условие, если нужно.
         AOS.init({
             duration: 600,
             easing: 'ease-out-cubic',

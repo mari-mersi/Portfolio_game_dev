@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Portfolio_game_dev.Areas.Admin.ViewModels;
 using Portfolio_game_dev.Data;
 using Portfolio_game_dev.Models;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace Portfolio_game_dev.Areas.Admin.Controllers;
 
@@ -11,9 +12,11 @@ namespace Portfolio_game_dev.Areas.Admin.Controllers;
 [Authorize(Roles = "Admin")]
 public class SkillsController : Controller {
     private readonly AppDbContext _db;
+    private readonly IOutputCacheStore _cache;
 
-    public SkillsController(AppDbContext db) {
+    public SkillsController(AppDbContext db, IOutputCacheStore cache) {
         _db = db;
+        _cache = cache;
     }
 
     // ── Index ────────────────────────────────────────────────────────
@@ -87,6 +90,7 @@ public class SkillsController : Controller {
 
         _db.Skills.Add(skill);
         await _db.SaveChangesAsync(ct);
+        await _cache.EvictByTagAsync("public", ct);
 
         TempData["Success"] = $"Навык «{skill.Name}» создан.";
         return RedirectToAction(nameof(Index));
@@ -139,6 +143,7 @@ public class SkillsController : Controller {
         skill.UpdatedAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync(ct);
+        await _cache.EvictByTagAsync("public", ct);
 
         TempData["Success"] = $"Навык «{skill.Name}» обновлён.";
         return RedirectToAction(nameof(Index));
@@ -165,6 +170,7 @@ public class SkillsController : Controller {
 
         _db.Skills.Remove(skill);
         await _db.SaveChangesAsync(ct);
+        await _cache.EvictByTagAsync("public", ct);
 
         TempData["Success"] = $"Навык «{skill.Name}» удалён.";
         return RedirectToAction(nameof(Index));

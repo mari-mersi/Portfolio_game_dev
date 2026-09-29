@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Portfolio_game_dev.Areas.Admin.ViewModels;
 using Portfolio_game_dev.Data;
 using Portfolio_game_dev.Models;
+using Microsoft.AspNetCore.OutputCaching;
 
 namespace Portfolio_game_dev.Areas.Admin.Controllers;
 
@@ -11,9 +12,11 @@ namespace Portfolio_game_dev.Areas.Admin.Controllers;
 [Authorize(Roles = "Admin")]
 public class ExperienceController : Controller {
     private readonly AppDbContext _db;
+    private readonly IOutputCacheStore _cache;
 
-    public ExperienceController(AppDbContext db) {
+    public ExperienceController(AppDbContext db, IOutputCacheStore cache) {
         _db = db;
+        _cache = cache;
     }
 
     // ── Index ────────────────────────────────────────────────────────
@@ -93,6 +96,8 @@ public class ExperienceController : Controller {
 
         _db.Experiences.Add(experience);
         await _db.SaveChangesAsync(ct);
+        await _cache.EvictByTagAsync("public", ct);
+
 
         TempData["Success"] = $"Опыт «{experience.Position} — {experience.Company}» добавлен.";
         return RedirectToAction(nameof(Index));
@@ -160,6 +165,7 @@ public class ExperienceController : Controller {
         experience.UpdatedAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync(ct);
+        await _cache.EvictByTagAsync("public", ct);
 
         TempData["Success"] = $"Опыт «{experience.Position} — {experience.Company}» обновлён.";
         return RedirectToAction(nameof(Index));
@@ -186,6 +192,7 @@ public class ExperienceController : Controller {
 
         _db.Experiences.Remove(experience);
         await _db.SaveChangesAsync(ct);
+        await _cache.EvictByTagAsync("public", ct);
 
         TempData["Success"] = $"Опыт «{experience.Position} — {experience.Company}» удалён.";
         return RedirectToAction(nameof(Index));

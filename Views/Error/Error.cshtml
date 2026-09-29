@@ -1,37 +1,75 @@
-﻿@{
+﻿@inject IWebHostEnvironment Env
+@{
+    Layout = null;
     var code = ViewData["Code"] as int? ?? 500;
     var title = ViewData["Title"] as string ?? "Что-то пошло не так";
     var requestId = System.Diagnostics.Activity.Current?.Id ?? Context.TraceIdentifier;
+    var isDev = Env.IsDevelopment();
+
+    string message = code switch {
+        404 => "Такой страницы не существует — возможно, ссылка устарела.",
+        500 => "На сервере произошла ошибка. Уже разбираюсь.",
+        403 => "Доступ к этой странице запрещён.",
+        _ => "Не удалось обработать запрос."
+    };
 }
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@title — GameDev Portfolio</title>
 
-<div class="text-center py-5">
-    <h1 class="display-1 fw-bold text-danger">@code</h1>
-    <h2 class="mb-4">@title</h2>
+    @* Tailwind CDN + кастомная тема — чтобы классы brand-600 и т.п. работали *@
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50:  '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet" />
+</head>
+<body class="min-h-screen flex items-center justify-center bg-slate-50 text-slate-800 font-sans antialiased">
+    <section class="max-w-2xl mx-auto px-4 py-20 text-center">
+        <div class="text-8xl font-extrabold text-brand-600 mb-4">@code</div>
+        <h1 class="text-3xl font-bold text-slate-900 mb-3">@title</h1>
+        <p class="text-slate-600 mb-8">@message</p>
 
-    <p class="lead text-muted">
-        @if (code == 404) {
-            @:Такой страницы не существует — возможно, ссылка устарела.
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="/"
+               class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium px-6 py-3 rounded-lg transition">
+                ← На главную
+            </a>
+            <a href="/Projects"
+               class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:border-brand-300 text-slate-700 font-medium px-6 py-3 rounded-lg transition">
+                К проектам
+            </a>
+        </div>
+
+        @if (isDev) {
+            <p class="mt-10 text-xs text-slate-400">
+                Request ID: <code class="font-mono">@requestId</code>
+            </p>
         }
-        else if (code == 500) {
-            @:На сервере произошла ошибка. Уже разбираюсь.
-        }
-        else {
-            @:Не удалось обработать запрос.
-        }
-    </p>
-
-    <div class="mt-4">
-        <a asp-controller="Home" asp-action="Index" class="btn btn-primary me-2">
-            На главную
-        </a>
-        <a asp-controller="Projects" asp-action="Index" class="btn btn-outline-secondary">
-            К проектам
-        </a>
-    </div>
-
-    @if (Context.RequestServices.GetService<IWebHostEnvironment>()?.IsDevelopment() == true) {
-        <p class="text-muted small mt-5">
-            Request ID: <code>@requestId</code>
-        </p>
-    }
-</div>
+    </section>
+</body>
+</html>

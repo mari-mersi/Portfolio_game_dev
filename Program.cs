@@ -1,13 +1,21 @@
 ﻿using System.Globalization;
 using System.Threading.RateLimiting;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Portfolio_game_dev.Data;
+using Portfolio_game_dev.Extensions;
 using Portfolio_game_dev.Services.Abstractions;
 using Portfolio_game_dev.Services.Implementations;
-using FluentValidation;
-using FluentValidation.AspNetCore;
+using Serilog;
+using Portfolio_game_dev.Middleware;
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateBootstrapLogger();
 
 // ── Культура ru-RU ───────────────────────────────────────────────────
 var ruCulture = new CultureInfo("ru-RU");
@@ -15,6 +23,10 @@ CultureInfo.DefaultThreadCurrentCulture = ruCulture;
 CultureInfo.DefaultThreadCurrentUICulture = ruCulture;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.UseSerilog((ctx, lc) => lc
+    .ReadFrom.Configuration(ctx.Configuration)
+    .Enrich.FromLogContext());
 
 // ── DbContext ────────────────────────────────────────────────────────
 // Путь к БД строим от ContentRootPath, а не от текущей директории,
@@ -48,6 +60,9 @@ builder.Services.AddControllersWithViews()
         options.AreaViewLocationFormats.Add("/Areas/{2}/Views/Shared/Partials/{0}.cshtml");
     });
 
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<AppDbContext>("database", tags: new[] { "db", "sqlite" });
+
 builder.Services.AddOutputCache(options => {
     options.AddPolicy("public", policy => policy
         .Expire(TimeSpan.FromSeconds(60))
@@ -73,6 +88,12 @@ builder.Services.AddRateLimiter(options => {
 // FluentValidation: валидаторы и авто-интеграция с ASP.NET Core
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 builder.Services.AddFluentValidationAutoValidation();
+
+builder.Services.AddResponseCompression(options => {
+    options.EnableForHttps = true;
+    options.MimeTypes = Microsoft.AspNetCore.ResponseCompression.ResponseCompressionDefaults.MimeTypes
+        .Concat(new[] { "image/svg+xml", "application/xml" });
+});
 
 // ── Наши сервисы ─────────────────────────────────────────────────────
 builder.Services.AddScoped<IPdfResumeService, PdfResumeService>();
@@ -110,13 +131,18 @@ if (Directory.Exists(fontsPath)) {
 var app = builder.Build();
 
 // ── Pipeline ─────────────────────────────────────────────────────────
+// Красивые страницы ошибок — и в dev, и в prod.
+app.UseExceptionHandler("/error");
+app.UseStatusCodePagesWithReExecute("/error/{0}");
+
 if (!app.Environment.IsDevelopment()) {
-    app.UseExceptionHandler("/error");
-    app.UseStatusCodePagesWithReExecute("/error/{0}");
+    // HSTS + HTTPS-редирект — только в Production.
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
+app.UseResponseCompression();
+app.UseSecurityHeaders();
 app.UseStaticFiles();
 
 app.UseRouting();
@@ -138,10 +164,40 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+app.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions {
+    ResponseWriter = async (context, report) => {
+        context.Response.ContentType = "application/json";
+        var result = System.Text.Json.JsonSerializer.Serialize(new {
+            status = report.Status.ToString(),
+            checks = report.Entries.Select(e => new {
+                name = e.Key,
+                status = e.Value.Status.ToString(),
+                duration = e.Value.Duration.TotalMilliseconds,
+                description = e.Value.Description
+            }),
+            totalDuration = report.TotalDuration.TotalMilliseconds
+        });
+        await context.Response.WriteAsync(result);
+    }
+});
+
 // ── Seed ─────────────────────────────────────────────────────────────
 // Отдельный scope: DbContext и UserManager — scoped.
-using (var scope = app.Services.CreateScope()) {
+try {
+    using var scope = app.Services.CreateScope();
     await DbSeeder.SeedAsync(scope.ServiceProvider);
 }
+catch (Exception ex) {
+    Log.Fatal(ex, "Ошибка при применении миграций/сидинге");
+    throw;
+}
 
-app.Run();
+try {
+    app.Run();
+}
+catch (Exception ex) {
+    Log.Fatal(ex, "Приложение упало при старте");
+}
+finally {
+    Log.CloseAndFlush();
+}

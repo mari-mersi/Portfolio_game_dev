@@ -1,22 +1,67 @@
 ﻿@{
+    Layout = null;
     ViewData["Code"] = 404;
-    ViewData["Title"] = "Страница не найдена";
+    var title = "Страница не найдена";
+    var isDev = Context.RequestServices
+        .GetService<IWebHostEnvironment>()?.IsDevelopment() == true;
+    var requestId = System.Diagnostics.Activity.Current?.Id ?? Context.TraceIdentifier;
 }
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@title — GameDev Portfolio</title>
 
-<div class="text-center py-5">
-    <h1 class="display-1 fw-bold text-warning">404</h1>
-    <h2 class="mb-4">Страница не найдена</h2>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    colors: {
+                        brand: {
+                            50:  '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#312e81',
+                        },
+                    },
+                },
+            },
+        };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet" />
+</head>
+<body class="min-h-screen flex items-center justify-center bg-slate-50 text-slate-800 font-sans antialiased">
+    <section class="max-w-2xl mx-auto px-4 py-20 text-center">
+        <div class="text-8xl font-extrabold text-amber-500 mb-4">404</div>
+        <h1 class="text-3xl font-bold text-slate-900 mb-3">@title</h1>
+        <p class="text-slate-600 mb-8">
+            Возможно, ссылка устарела или страница была перемещена.
+        </p>
 
-    <p class="lead text-muted">
-        Возможно, ссылка устарела или страница была перемещена.
-    </p>
+        <div class="flex flex-wrap justify-center gap-3">
+            <a href="/"
+               class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium px-6 py-3 rounded-lg transition">
+                ← На главную
+            </a>
+            <a href="/Projects"
+               class="inline-flex items-center gap-2 bg-white border border-slate-200 hover:border-brand-300 text-slate-700 font-medium px-6 py-3 rounded-lg transition">
+                К проектам
+            </a>
+        </div>
 
-    <div class="mt-4">
-        <a asp-controller="Home" asp-action="Index" class="btn btn-primary me-2">
-            На главную
-        </a>
-        <a asp-controller="Projects" asp-action="Index" class="btn btn-outline-secondary">
-            К проектам
-        </a>
-    </div>
-</div>
+        @if (isDev) {
+            <p class="mt-10 text-xs text-slate-400">
+                Request ID: <code class="font-mono">@requestId</code>
+            </p>
+        }
+    </section>
+</body>
+</html>
