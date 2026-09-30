@@ -21,5 +21,14 @@
 
         /// <summary>Куда ведёт secondary CTA (обычно /Resume/Download).</summary>
         public string SecondaryCtaUrl { get; set; } = "/Resume/Download";
+
+        /// <summary>
+        /// Путь к фото для hero (круглая аватарка). Относительный от wwwroot,
+        /// например "/images/avatar.jpg". Если null — фото не рендерится.
+        /// </summary>
+        public string? AvatarUrl { get; set; }
+
+        /// <summary>Alt-текст для аватарки (для доступности и SEO).</summary>
+        public string AvatarAlt { get; set; } = "Фото";
     }
 }

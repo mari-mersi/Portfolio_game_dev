@@ -1,14 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Portfolio_game_dev.Data;
+using Portfolio_game_dev.Models;
+using Portfolio_game_dev.Services.Abstractions;
+using Portfolio_game_dev.ViewModels;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
-using Portfolio_game_dev.Data;
-using Portfolio_game_dev.Models;
-using Portfolio_game_dev.ViewModels;
-using Portfolio_game_dev.Services.Abstractions;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 
 // Конфликт имён: QuestPDF.Fluent.Document vs System.Reflection.Metadata.Document
 using Document = QuestPDF.Fluent.Document;
+using ImageSharpImage = SixLabors.ImageSharp.Image;
 
 namespace Portfolio_game_dev.Services.Implementations;
 
@@ -19,10 +22,15 @@ public class PdfResumeService : IPdfResumeService {
     // Имя шрифта, зарегистрированного в wwwroot/fonts/
     private const string FontFamily = "Inter 18pt";
 
-    private readonly AppDbContext _db;
+    // Размер круглой аватарки в PDF (в пунктах, 1 pt = 1/72 inch).
+    private const int AvatarSizePt = 90;
 
-    public PdfResumeService(AppDbContext db) {
+    private readonly AppDbContext _db;
+    private readonly IWebHostEnvironment _env;
+
+    public PdfResumeService(AppDbContext db, IWebHostEnvironment env) {
         _db = db;
+        _env = env;
     }
 
     // ────────────────────────────────────────────────────────────
@@ -49,20 +57,17 @@ public class PdfResumeService : IPdfResumeService {
     }
 
     public async Task<ResumeViewModel> BuildViewModelAsync(CancellationToken ct = default) {
-        // Опыт: свежие сверху
         var experiences = await _db.Experiences
             .AsNoTracking()
             .OrderByDescending(e => e.StartDate)
             .ToListAsync(ct);
 
-        // Навыки: все, сгруппируем во вьюхе
         var skills = await _db.Skills
             .AsNoTracking()
             .OrderBy(s => s.Category)
             .ThenBy(s => s.SortOrder)
             .ToListAsync(ct);
 
-        // Проекты: featured, до 4 штук
         var projects = await _db.Projects
             .AsNoTracking()
             .Where(p => p.IsPublished && p.IsFeatured)
@@ -71,7 +76,6 @@ public class PdfResumeService : IPdfResumeService {
             .ToListAsync(ct);
 
         return new ResumeViewModel {
-            // ── Профиль (хардкод на старте; позже вынести в appsettings или отдельную таблицу)
             FullName = "Ваше Имя",
             Title = "Game Developer / Unity Developer",
             Email = "your@email.com",
@@ -81,6 +85,9 @@ public class PdfResumeService : IPdfResumeService {
             TelegramUrl = "https://t.me/your-username",
             Summary = "Game-разработчик с опытом создания игровых систем на Unity (C#) " +
                       "и Unreal Engine. Специализируюсь на архитектуре, оптимизации и геймдизайне.",
+
+            // Фото для PDF
+            AvatarPath = "/images/avatar.jpeg",
 
             Experiences = experiences,
             Skills = skills,
@@ -94,27 +101,105 @@ public class PdfResumeService : IPdfResumeService {
 
     private void ComposeHeader(IContainer container, ResumeViewModel model) {
         container.Column(col => {
-            col.Item().Text(model.FullName).Bold().FontSize(22).FontColor(Colors.Blue.Darken3);
-            col.Item().Text(model.Title).FontSize(12).FontColor(Colors.Grey.Darken2);
+            col.Item().Row(row => {
+                // ── Левая часть: фото (если есть) ──────────────────
+                var avatarBytes = LoadCircularAvatar(model.AvatarPath);
+                if (avatarBytes is not null) {
+                    row.ConstantItem(AvatarSizePt)
+                       .AlignMiddle()
+                       .Element(c => c
+                           .Width(AvatarSizePt)
+                           .Height(AvatarSizePt)
+                           .Image(avatarBytes)
+                           .FitArea());
 
-            col.Item().PaddingTop(6).Row(row => {
-                if (!string.IsNullOrEmpty(model.Email))
-                    row.RelativeItem().Text($"Email: {model.Email}").FontSize(9);
-                if (!string.IsNullOrEmpty(model.Phone))
-                    row.RelativeItem().Text($"Телефон: {model.Phone}").FontSize(9);
-                if (!string.IsNullOrEmpty(model.Location))
-                    row.RelativeItem().Text($"Локация: {model.Location}").FontSize(9);
-            });
+                    // Отступ между фото и текстом
+                    row.ConstantItem(12);
+                }
 
-            col.Item().PaddingTop(2).Row(row => {
-                if (!string.IsNullOrEmpty(model.GitHubUrl))
-                    row.RelativeItem().Text($"GitHub: {model.GitHubUrl}").FontSize(9);
-                if (!string.IsNullOrEmpty(model.TelegramUrl))
-                    row.RelativeItem().Text($"Telegram: {model.TelegramUrl}").FontSize(9);
+                // ── Правая часть: имя, должность, контакты ──────────
+                row.RelativeItem().Column(info => {
+                    info.Item().Text(model.FullName).Bold().FontSize(22).FontColor(Colors.Blue.Darken3);
+                    info.Item().Text(model.Title).FontSize(12).FontColor(Colors.Grey.Darken2);
+
+                    info.Item().PaddingTop(6).Row(r => {
+                        if (!string.IsNullOrEmpty(model.Email))
+                            r.RelativeItem().Text($"Email: {model.Email}").FontSize(9);
+                        if (!string.IsNullOrEmpty(model.Phone))
+                            r.RelativeItem().Text($"Телефон: {model.Phone}").FontSize(9);
+                        if (!string.IsNullOrEmpty(model.Location))
+                            r.RelativeItem().Text($"Локация: {model.Location}").FontSize(9);
+                    });
+
+                    info.Item().PaddingTop(2).Row(r => {
+                        if (!string.IsNullOrEmpty(model.GitHubUrl))
+                            r.RelativeItem().Text($"GitHub: {model.GitHubUrl}").FontSize(9);
+                        if (!string.IsNullOrEmpty(model.TelegramUrl))
+                            r.RelativeItem().Text($"Telegram: {model.TelegramUrl}").FontSize(9);
+                    });
+                });
             });
 
             col.Item().PaddingTop(8).LineHorizontal(1).LineColor(Colors.Grey.Lighten1);
         });
+    }
+
+    /// <summary>
+    /// Загружает фото из wwwroot и обрезает его под круг.
+    /// Возвращает PNG-байты или null, если файла нет.
+    /// Работает без SixLabors.ImageSharp.Drawing — попиксельная маска.
+    /// </summary>
+    private byte[]? LoadCircularAvatar(string? avatarPath) {
+        if (string.IsNullOrWhiteSpace(avatarPath))
+            return null;
+
+        // avatarPath: "/images/avatar.jpeg" → wwwroot/images/avatar.jpeg
+        var relative = avatarPath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar);
+        var fullPath = Path.Combine(_env.WebRootPath, relative);
+
+        if (!File.Exists(fullPath))
+            return null;
+
+        try {
+            // Загружаем как Rgba32 — нужен альфа-канал для прозрачности
+            using var image = ImageSharpImage.Load<SixLabors.ImageSharp.PixelFormats.Rgba32>(fullPath);
+
+            // 1) Центральный кроп до квадрата (по меньшей стороне)
+            var side = Math.Min(image.Width, image.Height);
+            image.Mutate(ctx => ctx.Crop(new Rectangle(
+                (image.Width - side) / 2,
+                (image.Height - side) / 2,
+                side,
+                side)));
+
+            // 2) Ресайз до 300×300
+            image.Mutate(ctx => ctx.Resize(300, 300));
+
+            // 3) Попиксельная маска-круг: всё за пределами круга — прозрачное
+            var radius = 150.0;
+            var center = 150.0;
+
+            image.ProcessPixelRows(accessor => {
+                for (int y = 0; y < accessor.Height; y++) {
+                    var row = accessor.GetRowSpan(y);
+                    for (int x = 0; x < accessor.Width; x++) {
+                        var dx = x - center;
+                        var dy = y - center;
+                        if (Math.Sqrt(dx * dx + dy * dy) > radius) {
+                            row[x] = new SixLabors.ImageSharp.PixelFormats.Rgba32(0, 0, 0, 0);
+                        }
+                    }
+                }
+            });
+
+            using var ms = new MemoryStream();
+            image.SaveAsPng(ms);   // PNG — потому что нужна прозрачность
+            return ms.ToArray();
+        }
+        catch {
+            // Если что-то пошло не так — просто без фото.
+            return null;
+        }
     }
 
     // ────────────────────────────────────────────────────────────

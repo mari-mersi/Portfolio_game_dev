@@ -18,4 +18,9 @@ public class ResumeViewModel {
     public List<Models.Experience> Experiences { get; set; } = new();
     public List<Models.Skill> Skills { get; set; } = new();
     public List<Models.Project> Projects { get; set; } = new();
+    /// <summary>
+    /// Путь к фото (относительный от wwwroot или абсолютный файловый).
+    /// Используется в PDF-резюме. Пример: "/images/avatar.jpg".
+    /// </summary>
+    public string? AvatarPath { get; set; }
 }

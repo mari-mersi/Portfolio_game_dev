@@ -28,25 +28,19 @@
 
         @* Профиль *@
         <header class="border-b border-slate-100 pb-6">
-            <h2 class="text-3xl font-extrabold text-slate-900 mb-1">@Model.FullName</h2>
-            <p class="text-lg text-brand-600 font-semibold mb-4">@Model.Title</p>
+            <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+                @if (!string.IsNullOrEmpty(Model.AvatarPath)) {
+                    <img src="@Model.AvatarPath" alt="Фото"
+                         class="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-white shadow-lg" />
+                }
+                <div class="text-center sm:text-left">
+                    <h2 class="text-3xl font-extrabold text-slate-900 mb-1">@Model.FullName</h2>
+                    <p class="text-lg text-brand-600 font-semibold mb-4">@Model.Title</p>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600">
-                @if (!string.IsNullOrEmpty(Model.Email)) {
-                    <div><span class="font-medium text-slate-700">Email:</span> <a href="mailto:@Model.Email" class="hover:text-brand-600">@Model.Email</a></div>
-                }
-                @if (!string.IsNullOrEmpty(Model.Phone)) {
-                    <div><span class="font-medium text-slate-700">Телефон:</span> @Model.Phone</div>
-                }
-                @if (!string.IsNullOrEmpty(Model.Location)) {
-                    <div><span class="font-medium text-slate-700">Локация:</span> @Model.Location</div>
-                }
-                @if (!string.IsNullOrEmpty(Model.GitHubUrl)) {
-                    <div><span class="font-medium text-slate-700">GitHub:</span> <a href="@Model.GitHubUrl" target="_blank" rel="noopener" class="hover:text-brand-600">@Model.GitHubUrl</a></div>
-                }
-                @if (!string.IsNullOrEmpty(Model.TelegramUrl)) {
-                    <div><span class="font-medium text-slate-700">Telegram:</span> <a href="@Model.TelegramUrl" target="_blank" rel="noopener" class="hover:text-brand-600">@Model.TelegramUrl</a></div>
-                }
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-600">
+                        @* ... твои существующие контакты ... *@
+                    </div>
+                </div>
             </div>
         </header>
 

@@ -18,7 +18,7 @@ namespace Portfolio_game_dev.Controllers {
 
         // GET: /error/404
         [Route("404")]
-        public IActionResult NotFound() {
+        public new IActionResult NotFound() {
             Response.StatusCode = StatusCodes.Status404NotFound;
             ViewData["Title"] = "Страница не найдена";
             ViewData["Code"] = 404;

@@ -39,6 +39,10 @@ public class HomeController : Controller {
                 PrimaryCtaUrl = "/Projects",
                 SecondaryCtaText = "Скачать резюме",
                 SecondaryCtaUrl = "/Resume/Download",
+
+                // Путь относительно wwwroot. Положи файл в wwwroot/images/avatar.jpg
+                AvatarUrl = "/images/avatar.jpeg",
+                AvatarAlt = "Фото автора портфолио"
             },
             FeaturedProjects = await _projects.GetFeaturedAsync(3),
             FeaturedSkills = await _skills.GetTopAsync(8),

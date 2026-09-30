@@ -13,37 +13,63 @@
     <div class="absolute top-0 right-0 -z-10 w-96 h-96 bg-brand-100 rounded-full blur-3xl opacity-50"></div>
 
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
-        <div class="max-w-3xl" data-aos="fade-up">
-            <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand-700 bg-brand-50 px-3 py-1 rounded-full border border-brand-100 mb-6">
-                <span class="w-1.5 h-1.5 bg-brand-500 rounded-full"></span>
-                Открыт к предложениям
-            </span>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
 
-            <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-6">
-                @Model.Hero.Tagline
-            </h1>
+            @* ── Левая колонка: текст ───────────────────────────── *@
+            <div class="lg:col-span-7" data-aos="fade-up">
+                <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand-700 bg-brand-50 px-3 py-1 rounded-full border border-brand-100 mb-6">
+                    <span class="w-1.5 h-1.5 bg-brand-500 rounded-full"></span>
+                    Открыт к предложениям
+                </span>
 
-            <p class="text-lg sm:text-xl text-slate-600 leading-relaxed mb-8">
-                @Model.Hero.Subline
-            </p>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 mb-6">
+                    @Model.Hero.Tagline
+                </h1>
 
-            <div class="flex flex-wrap gap-3">
-                <a href="@Model.Hero.PrimaryCtaUrl"
-                   class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium px-6 py-3 rounded-lg shadow-sm transition">
-                    @Model.Hero.PrimaryCtaText
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                    </svg>
-                </a>
-                <a href="@Model.Hero.SecondaryCtaUrl"
-                   class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-medium px-6 py-3 rounded-lg border border-slate-200 transition">
-                    @Model.Hero.SecondaryCtaText
-                </a>
+                <p class="text-lg sm:text-xl text-slate-600 leading-relaxed mb-8">
+                    @Model.Hero.Subline
+                </p>
+
+                <div class="flex flex-wrap gap-3">
+                    <a href="@Model.Hero.PrimaryCtaUrl"
+                       class="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-medium px-6 py-3 rounded-lg shadow-sm transition">
+                        @Model.Hero.PrimaryCtaText
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                        </svg>
+                    </a>
+                    <a href="@Model.Hero.SecondaryCtaUrl"
+                       class="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 font-medium px-6 py-3 rounded-lg border border-slate-200 transition">
+                        @Model.Hero.SecondaryCtaText
+                    </a>
+                </div>
             </div>
+
+            @* ── Правая колонка: круглое фото ───────────────────── *@
+            @if (!string.IsNullOrEmpty(Model.Hero.AvatarUrl)) {
+                <div class="lg:col-span-5 flex justify-center lg:justify-end" data-aos="fade-up" data-aos-delay="150">
+                    <div class="relative">
+                        @* Декоративное кольцо вокруг фото *@
+                        <div class="absolute -inset-4 rounded-full bg-gradient-to-tr from-brand-200 via-brand-100 to-transparent opacity-70 blur-xl"></div>
+                        <div class="absolute -inset-1 rounded-full bg-gradient-to-tr from-brand-500 to-brand-700"></div>
+
+                        @* Круглая аватарка. object-cover обрежет любое фото под круг. *@
+                        <img src="@Model.Hero.AvatarUrl"
+                             alt="@Model.Hero.AvatarAlt"
+                             loading="eager"
+                             class="relative w-56 h-56 sm:w-64 sm:h-64 lg:w-80 lg:h-80 rounded-full object-cover border-4 border-white shadow-2xl" />
+
+                        @* Бейдж со статусом (опционально) *@
+                        <span class="absolute bottom-2 right-2 inline-flex items-center gap-1.5 bg-white shadow-lg border border-slate-100 text-xs font-medium text-slate-700 px-3 py-1.5 rounded-full">
+                            <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                            Open to work
+                        </span>
+                    </div>
+                </div>
+            }
         </div>
     </div>
 </section>
-
 @* ═══════════════════════════════════════════════════════════════════
    FEATURED PROJECTS
    ═══════════════════════════════════════════════════════════════════ *@
