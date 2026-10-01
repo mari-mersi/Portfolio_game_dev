@@ -16,7 +16,7 @@
         <a asp-area="Admin" asp-controller="Projects" asp-action="Index"
            class="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-md hover:-translate-y-0.5 transition">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-xs uppercase tracking-wider text-slate-400">Проекты</span>
+                <span class="text-xs uppercase tracking-wider text-slate-500">Проекты</span>
                 <span class="text-xl">🎮</span>
             </div>
             <div class="text-3xl font-bold text-slate-900">@Model.ProjectsCount</div>
@@ -28,7 +28,7 @@
         <a asp-area="Admin" asp-controller="Skills" asp-action="Index"
            class="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-md hover:-translate-y-0.5 transition">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-xs uppercase tracking-wider text-slate-400">Навыки</span>
+                <span class="text-xs uppercase tracking-wider text-slate-500">Навыки</span>
                 <span class="text-xl">⚡</span>
             </div>
             <div class="text-3xl font-bold text-slate-900">@Model.SkillsCount</div>
@@ -37,7 +37,7 @@
         <a asp-area="Admin" asp-controller="Blog" asp-action="Index"
            class="bg-white rounded-2xl border border-slate-200 p-5 hover:shadow-md hover:-translate-y-0.5 transition">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-xs uppercase tracking-wider text-slate-400">Статьи</span>
+                <span class="text-xs uppercase tracking-wider text-slate-500">Статьи</span>
                 <span class="text-xl">📝</span>
             </div>
             <div class="text-3xl font-bold text-slate-900">@Model.PostsCount</div>
@@ -49,7 +49,7 @@
         <a asp-area="Admin" asp-controller="ContactMessages" asp-action="Index"
            class="bg-white rounded-2xl border @(Model.UnreadMessagesCount > 0 ? "border-brand-300" : "border-slate-200") p-5 hover:shadow-md hover:-translate-y-0.5 transition">
             <div class="flex items-center justify-between mb-2">
-                <span class="text-xs uppercase tracking-wider text-slate-400">Сообщения</span>
+                <span class="text-xs uppercase tracking-wider text-slate-500">Сообщения</span>
                 <span class="text-xl">✉️</span>
             </div>
             <div class="text-3xl font-bold text-slate-900">@Model.TotalMessagesCount</div>
@@ -59,7 +59,7 @@
                 </div>
             }
             else {
-                <div class="text-xs text-slate-400 mt-1">все прочитаны</div>
+                <div class="text-xs text-slate-500 mt-1">все прочитаны</div>
             }
         </a>
     </div>

@@ -77,6 +77,8 @@ secrets.json
 # Картинки/видео, загруженные через админку. Не коммитим.
 wwwroot/uploads/*
 !wwwroot/uploads/.gitkeep
+#node_modules/
+#wwwroot/css/site.css
 
 # ── 8. Публикация / деплой ─────────────────────────────────────────
 publish/

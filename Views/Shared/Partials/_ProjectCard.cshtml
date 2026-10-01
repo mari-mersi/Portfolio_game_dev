@@ -13,10 +13,18 @@
        class="block relative overflow-hidden aspect-video bg-slate-100">
 
         @if (!string.IsNullOrEmpty(Model.CoverImageUrl)) {
-            <img src="@Model.CoverImageUrl"
-                 alt="@Model.Title"
-                 loading="lazy"
-                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <picture>
+                <source media="(min-width: 1024px)" srcset="@Model.CoverImageUrl" type="image/webp" />
+                <source srcset="@Model.CoverThumbUrl" type="image/webp" />
+                <img src="@Model.CoverThumbUrl"
+                     width="400" 
+                     height="225"
+                     alt="@Model.Title"
+                     aria-hidden="true"
+                     loading="lazy"
+                     decoding="async"
+                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            </picture>
         }
         else {
             @* Заглушка, если обложки нет *@
@@ -93,7 +101,7 @@
             </a>
 
             @if (Model.ReleaseDate.HasValue) {
-                <span class="text-xs text-slate-400">@Model.ReleaseDate.Value.Year</span>
+                <span class="text-xs text-slate-500">@Model.ReleaseDate.Value.Year</span>
             }
         </div>
     </div>

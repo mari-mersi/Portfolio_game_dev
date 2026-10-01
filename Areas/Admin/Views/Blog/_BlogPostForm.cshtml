@@ -10,7 +10,7 @@
     </div>
     <div>
         <label asp-for="Slug" class="block text-sm font-medium mb-1">
-            Slug (URL) <span class="text-slate-400 text-xs font-normal">— опционально</span>
+            Slug (URL) <span class="text-slate-500 text-xs font-normal">— опционально</span>
         </label>
         <input asp-for="Slug" id="Slug" class="w-full border rounded-lg px-3 py-2 font-mono text-sm"
                placeholder="оставьте пустым — сгенерируется автоматически" />
@@ -26,7 +26,7 @@
 
 <div>
     <label asp-for="Content" class="block text-sm font-medium mb-1">
-        Полный текст (Markdown) <span class="text-slate-400 text-xs font-normal">— превью ниже</span>
+        Полный текст (Markdown) <span class="text-slate-500 text-xs font-normal">— превью ниже</span>
     </label>
     <textarea asp-for="Content" id="content-input" rows="14"
               class="w-full border rounded-lg px-3 py-2 font-mono text-sm"
@@ -35,9 +35,9 @@
 
     @* Markdown preview *@
     <div class="mt-3 border rounded-lg bg-slate-50 p-4">
-        <div class="text-xs uppercase tracking-wider text-slate-400 mb-2">Превью</div>
+        <div class="text-xs uppercase tracking-wider text-slate-500 mb-2">Превью</div>
         <div id="content-preview" class="prose prose-slate max-w-none text-sm">
-            <p class="text-slate-400 italic">Начните печатать, чтобы увидеть превью...</p>
+            <p class="text-slate-500 italic">Начните печатать, чтобы увидеть превью...</p>
         </div>
     </div>
 </div>
@@ -81,7 +81,7 @@
     @if (!string.IsNullOrEmpty(Model.ExistingCoverImageUrl)) {
         <div class="mt-2 flex items-center gap-3">
             <img src="@Model.ExistingCoverImageUrl" alt="Обложка" class="w-24 h-24 object-cover rounded-lg border" />
-            <span class="text-xs text-slate-400">Текущая обложка. Загрузите новую, чтобы заменить.</span>
+            <span class="text-xs text-slate-500">Текущая обложка. Загрузите новую, чтобы заменить.</span>
         </div>
     }
 </div>
@@ -130,7 +130,7 @@
         function updatePreview() {
             const text = contentInput?.value?.trim();
             if (!text) {
-                preview.innerHTML = '<p class="text-slate-400 italic">Начните печатать, чтобы увидеть превью...</p>';
+                preview.innerHTML = '<p class="text-slate-500 italic">Начните печатать, чтобы увидеть превью...</p>';
                 return;
             }
             preview.innerHTML = marked.parse(text);

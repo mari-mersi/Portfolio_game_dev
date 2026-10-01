@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Portfolio_game_dev.Models;
 
@@ -27,6 +28,14 @@ public class BlogPost : BaseEntity {
     [MaxLength(300)]
     /// <summary>Путь к обложке.</summary>
     public string? CoverImageUrl { get; set; }
+
+    /// <summary>
+    /// URL thumbnail-обложки (для карточек). Вычисляется из CoverImageUrl.
+    /// </summary>
+    [NotMapped]
+    public string? CoverThumbUrl => string.IsNullOrEmpty(CoverImageUrl)
+        ? null
+        : CoverImageUrl.Replace("-full.webp", "-thumb.webp");
 
     /// <summary>Примерное время чтения в минутах. Можно считать вручную или в сервисе.</summary>
     public int ReadTimeMinutes { get; set; }

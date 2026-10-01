@@ -34,7 +34,7 @@
         <section class="mb-12" data-aos="fade-up">
             <div class="flex items-baseline justify-between mb-5">
                 <h2 class="text-2xl font-bold text-slate-900">@group.Category</h2>
-                <span class="text-sm text-slate-400">
+                <span class="text-sm text-slate-500">
                     средний уровень: <strong class="text-slate-600">@group.AverageLevel.ToString("0.0")</strong> / 5
                 </span>
             </div>
@@ -44,7 +44,9 @@
                     <div class="bg-white border border-slate-200 rounded-2xl p-5 hover:shadow-md hover:-translate-y-0.5 transition">
                         <div class="flex items-center gap-3 mb-3">
                             @if (!string.IsNullOrEmpty(skill.IconUrl)) {
-                                <img src="@skill.IconUrl" alt="@skill.Name" class="w-8 h-8 object-contain" loading="lazy" />
+                                <img src="@skill.IconUrl"
+                                     width="32"
+                                     height="32" alt="@skill.Name" class="w-8 h-8 object-contain" loading="lazy" />
                             }
                             <div class="font-semibold text-slate-900">@skill.Name</div>
                         </div>
@@ -60,7 +62,7 @@
                         </div>
 
                         @if (skill.YearsOfExperience > 0) {
-                            <div class="text-xs text-slate-400 mt-2">
+                            <div class="text-xs text-slate-500 mt-2">
                                 ~@skill.YearsOfExperience @(skill.YearsOfExperience == 1 ? "год" : "года")
                             </div>
                         }

@@ -29,6 +29,14 @@ public class Project : BaseEntity {
     /// <summary>Путь к обложке (thumb или full). Относительный URL, например /uploads/projects/foo-full.webp.</summary>
     public string? CoverImageUrl { get; set; }
 
+    /// <summary>
+    /// URL thumbnail-обложки (для карточек). Вычисляется из CoverImageUrl.
+    /// </summary>
+    [NotMapped]
+    public string? CoverThumbUrl => string.IsNullOrEmpty(CoverImageUrl)
+        ? null
+        : CoverImageUrl.Replace("-full.webp", "-thumb.webp");
+
     [MaxLength(100)]
     /// <summary>Жанр: "Action / Platformer", "Tactical RPG" и т.п.</summary>
     public string? Genre { get; set; }

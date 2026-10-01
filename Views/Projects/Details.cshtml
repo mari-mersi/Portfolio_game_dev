@@ -45,7 +45,8 @@
     @* ── Обложка ────────────────────────────────────────────── *@
     @if (!string.IsNullOrEmpty(project.CoverImageUrl)) {
         <div class="mb-10 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100">
-            <img src="@project.CoverImageUrl" alt="@project.Title"
+            <img src="@project.CoverImageUrl" alt="@project.Title" width="1200"
+                 height="675"
                  class="w-full max-h-[520px] object-cover" />
         </div>
     }
@@ -58,21 +59,21 @@
             <div class="bg-white rounded-2xl border border-slate-200 p-6 space-y-5 sticky top-24">
                 @if (!string.IsNullOrEmpty(project.Genre)) {
                     <div>
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Жанр</h3>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Жанр</h3>
                         <p class="text-sm font-medium text-slate-800">@project.Genre</p>
                     </div>
                 }
 
                 @if (!string.IsNullOrEmpty(project.Role)) {
                     <div>
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Роль</h3>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Роль</h3>
                         <p class="text-sm font-medium text-slate-800">@project.Role</p>
                     </div>
                 }
 
                 @if (project.ReleaseDate.HasValue) {
                     <div>
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Дата релиза</h3>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Дата релиза</h3>
                         <p class="text-sm font-medium text-slate-800">
                             @project.ReleaseDate.Value.ToString("d MMMM yyyy")
                         </p>
@@ -81,7 +82,7 @@
 
                 @if (project.TechList.Any()) {
                     <div>
-                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Стек</h3>
+                        <h3 class="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Стек</h3>
                         <div class="flex flex-wrap gap-1.5">
                             @foreach (var tech in project.TechList) {
                                 <span class="text-xs text-slate-600 bg-slate-100 px-2 py-1 rounded">@tech</span>

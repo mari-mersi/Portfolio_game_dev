@@ -40,7 +40,7 @@
                asp-route-tag="@currentTag" asp-route-page="1"
                class="inline-flex items-center justify-center w-9 h-9 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:border-brand-300 hover:text-brand-600 transition">1</a>
             if (windowStart > 2) {
-                <span class="px-2 text-slate-400">…</span>
+                <span class="px-2 text-slate-500">…</span>
             }
         }
 
@@ -60,7 +60,7 @@
         @* ─── Многоточие + последняя ─────────────────────────── *@
         @if (windowEnd < total) {
             if (windowEnd < total - 1) {
-                <span class="px-2 text-slate-400">…</span>
+                <span class="px-2 text-slate-500">…</span>
             }
             <a asp-controller="@paginationController" asp-action="@paginationAction"
                asp-route-tag="@currentTag" asp-route-page="@total"

@@ -55,7 +55,7 @@
             <tbody>
                 @if (!Model.Experiences.Any()) {
                     <tr>
-                        <td colspan="5" class="px-4 py-8 text-center text-slate-400">
+                        <td colspan="5" class="px-4 py-8 text-center text-slate-500">
                             Записи не найдены
                         </td>
                     </tr>
@@ -65,7 +65,7 @@
                         <td class="px-4 py-2">
                             <div class="font-medium text-slate-900">@e.Company</div>
                             @if (!string.IsNullOrEmpty(e.Location)) {
-                                <div class="text-xs text-slate-400">@e.Location</div>
+                                <div class="text-xs text-slate-500">@e.Location</div>
                             }
                         </td>
                         <td class="px-4 py-2">

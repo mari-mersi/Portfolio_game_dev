@@ -56,7 +56,7 @@
             <tbody>
                 @if (!Model.Posts.Any()) {
                     <tr>
-                        <td colspan="6" class="px-4 py-8 text-center text-slate-400">
+                        <td colspan="6" class="px-4 py-8 text-center text-slate-500">
                             Статьи не найдены
                         </td>
                     </tr>
@@ -75,7 +75,7 @@
                         </td>
                         <td class="px-4 py-2">
                             <div class="font-medium text-slate-900">@p.Title</div>
-                            <div class="text-xs text-slate-400">/@p.Slug</div>
+                            <div class="text-xs text-slate-500">/@p.Slug</div>
                         </td>
                         <td class="px-4 py-2">
                             <div class="flex flex-wrap gap-1">
@@ -120,7 +120,7 @@
                     }
                     <div class="min-w-0">
                         <div class="font-bold text-slate-900 truncate">@p.Title</div>
-                        <div class="text-xs text-slate-400 truncate">/@p.Slug</div>
+                        <div class="text-xs text-slate-500 truncate">/@p.Slug</div>
                     </div>
                 </div>
 

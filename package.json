@@ -1,0 +1,15 @@
+{
+    "name": "portfolio-game-dev",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "css:build": "tailwindcss -i ./wwwroot/css/input.css -o ./wwwroot/css/site.css --minify",
+        "css:watch": "tailwindcss -i ./wwwroot/css/input.css -o ./wwwroot/css/site.css --watch",
+        "css:dev": "tailwindcss -i ./wwwroot/css/input.css -o ./wwwroot/css/site.css"
+    },
+    "devDependencies": {
+        "tailwindcss": "^3.4.17",
+        "autoprefixer": "^10.4.20",
+        "@tailwindcss/typography": "^0.5.15"
+    }
+}
